@@ -1,0 +1,27 @@
+Package: attr
+Type: Package
+Title: Attribute Changepoints Detected by Relative Homogenization
+Version: 0.1.0
+Date: 2024-03-19
+Author: Ninh Nguyen
+Maintainer: Ninh Nguyen <knguyen@ipgp.fr>
+Description: Ifentify the origin of changepoints using the Generalized Least Square and Random Forest.
+Depends: R (>= 3.5.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Imports: 
+    usethis,
+    dplyr,
+    tidyr,
+    forecast,
+    lmtest,
+    robustbase,
+    stringr,
+    gt,
+    randomForest,
+    nlme
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
