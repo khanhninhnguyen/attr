@@ -1,4 +1,3 @@
-
 #' Predict the origin of breakpoints in the main station
 #'
 #' @description
