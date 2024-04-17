@@ -42,7 +42,7 @@
 #' @importFrom stringr str_c
 #' @export
 #'
-sigificance_test <- function(Series_df, Name_series, Break_point, limit = NULL,
+Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
                              tol = 0.01, noise_model, length_win = 60, name_case = NULL){
 
   Date <- .data <- wts <- NULL

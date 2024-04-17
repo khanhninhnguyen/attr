@@ -22,6 +22,9 @@
 #' @importFrom stats na.omit approx
 #'
 #' @keywords internal
+#'
+#' @noRd
+
 
 Sliding_std <- function(Y, name.var, length.wind = 60){
 

@@ -31,7 +31,7 @@
 
 #' @export
 #'
-model_identification <- function(dataset, main_break, nearby_break){
+NoiseModel_Id <- function(dataset, main_break, nearby_break){
 
   #####
   # pre-check
@@ -58,14 +58,19 @@ model_identification <- function(dataset, main_break, nearby_break){
   }
 
   names_col = c("Date", "GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
+  required_columns = lapply(c(1:length(dataset)), function(i) all(names_col %in% names(dataset[[i]])))
+  stopifnot("Columns in test_result must include \
+            : Date, GE, GGp, GEp, EEp, GpEp, GpE" = all(required_columns))
 
-  dataset <- lapply(dataset, function(df) {
-    colnames(df) <-  names_col
-    return(df)
-  })
+  #
+  # dataset <- lapply(dataset, function(df) {
+  #   colnames(df) <-  names_col
+  #   return(df)
+  # })
 
   #####
   # Identify_model function
+  # Series_df -> Series_df_One, Breakpint --> CP_One
   identify_model <- function(Series_df, Name_series, Breakpoints,
                              begin_day = NULL, end_day = NULL, tol0 = 0.01, name_case = NULL, ...) {
 

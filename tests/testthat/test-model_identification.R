@@ -29,5 +29,5 @@
 #                   format = "%Y-%m-%d")
 # )
 #
-# model_identification(dataset, main_break, nearby_break)
+# NoiseModel_Id(dataset, main_break, nearby_break)
 #

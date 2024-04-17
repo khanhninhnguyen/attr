@@ -29,5 +29,5 @@
 #                   format = "%Y-%m-%d")
 # )
 # #
-# sigificance_test(dataset$bces, Name_series = "GPS_ERA", Break_point = main_break,
+# Test_CP(dataset$bces, Name_series = "GPS_ERA", Break_point = main_break,
 #                  noise_model = c(1,0,1), limit = 100)

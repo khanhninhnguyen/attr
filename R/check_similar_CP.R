@@ -23,7 +23,7 @@
 #' @export
 #' @keywords internal
 
-check_similar_cp <- function(Six_Series, List_break_main, List_break_nearby, threshold){
+check_similar_CP <- function(Six_Series, List_break_main, List_break_nearby, threshold){
 
   Date <- GE <- NULL
 

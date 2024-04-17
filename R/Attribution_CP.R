@@ -75,7 +75,7 @@
 #' @export
 #'
 #'
-attribute_breakpoint <- function(dataset,
+Attribution_CP <- function(dataset,
                                  main_break,
                                  nearby_break,
                                  noise_model_fix = NULL,
@@ -148,7 +148,7 @@ attribute_breakpoint <- function(dataset,
   #####
   # Model identification
   if (is.null(noise_model_fix)) {
-    Noise_model <- model_identification(dataset, main_break, nearby_break)
+    Noise_model <- NoiseModel_Id(dataset, main_break, nearby_break)
   } else {
     Noise_model <- data.frame(matrix(noise_model_fix,
                                      ncol = length(nearby_name),
@@ -179,7 +179,7 @@ attribute_breakpoint <- function(dataset,
   # remove the similar change points in the nearby for the test
 
   similar_cp <- lapply(nearby_name, function(x) {
-    check_similar_cp(Six_Series = dataset[[x]],
+    check_similar_CP(Six_Series = dataset[[x]],
                      List_break_main = main_break,
                      List_break_nearby = nearby_break[[x]],
                      threshold = 10)
@@ -212,7 +212,7 @@ attribute_breakpoint <- function(dataset,
 
       data_test <- df %>%
         dplyr:: filter(Date > begin & Date <= end)
-      fit_fgls <- sigificance_test(Series_df = data_test,
+      fit_fgls <- Test_CP(Series_df = data_test,
                                    Name_series = Name_series,
                                    Break_point = Breakpoint,
                                    noise_model = noise_model,
@@ -338,15 +338,13 @@ attribute_breakpoint <- function(dataset,
     max_counts <- round(max(counts)/length(x), digits = 2)
     return(max_counts)
   }
-  # load predictive models
-  predictive_models = readRDS(file = system.file("extdata", "Rf.RDS", package = "attr"))
 
   Predict_ind_result <- lapply(as.character(main_break), function(x) {
 
     new_df = na.omit(as.data.frame(t(t_val_all[[x]])))
 
     if (nrow(new_df) >0) {
-      prediction = predictive_rule(new_df, predictive_models)[,c(25:27)]
+      prediction = Prediction_CP(new_df)[,c(25:27)]
       rownames(prediction) <- rownames(new_df)
     } else{
       prediction = NA

@@ -3,9 +3,6 @@
 #' @param test_result A data frame with dimension (n*6) where  where n is the
 #' number of nearby stations. The 6 columns correspond to the 6 difference series.
 #'
-#' @param predictive_models A list of 24 Random Forest pre-trained and given in
-#' "inst/extdata.Rf.RDS"
-#'
 #' @return A dataframe of 3 columns the  candidate configuration with the highest
 #' frequency after running 24 models, the probability of the candidate, and the
 #' final configuration. Each row corresponds to a nearby station.
@@ -19,20 +16,21 @@
 #' @export
 #' @keywords internal
 #'
-predictive_rule <- function(test_result, predictive_models){
+Prediction_CP <- function(test_result){
+
+  # load predictive models
+  predictive_models = readRDS(file = system.file("extdata", "Rf.RDS", package = "attr"))
 
   Freq <- max_freq_config <- NULL
 
+  # Validate the input form and column's names
   stopifnot("test_result must be a data frame" = is.data.frame(test_result))
-
   stopifnot("test_result must have 6 columns" = (ncol(test_result)==6))
-
-  condition_name = identical(names(test_result),
-                             c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE"))
-
+  required_columns = all(c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE") %in% names(test_result))
   stopifnot("Columns in test_result must be \
-            : GE, GGp, GEp, EEp, GpEp, GpE" = isTRUE(condition_name))
+            : GE, GGp, GEp, EEp, GpEp, GpE" = isTRUE(required_columns))
 
+  # Apply RF models
   candidate_config <- data.frame(matrix(NA,
                                         ncol = length(predictive_models),
                                         nrow = nrow(test_result)))
@@ -41,9 +39,9 @@ predictive_rule <- function(test_result, predictive_models){
     set.seed(1)
     Model_i = predictive_models[[paste0("model",i)]]
     candidate_config[,i] = predict(Model_i, newdata = test_result)
-
   }
 
+  # Helper function to find the most frequent values with ties
   most_frequent_with_ties <- function(x) {
     uniq_vals <- unique(x)
     counts <- table(x)
@@ -51,16 +49,18 @@ predictive_rule <- function(test_result, predictive_models){
     most_freq_vals <- names(counts)[counts == max_counts]
     return(paste(most_freq_vals, collapse=", "))
   }
+
+  # Helper function to select the final configuration based on probabilities
   select_final_c <- function(x) {
+    prob <- c(0.18225,0.010125,0.010125,0.0005625,0.010125,0.0005625,0.0005625,
+              0.010125,0.010125,0.18225,0.0005625,0.0005625,0.010125,0.0005625,
+              0.18225,0.010125,0.010125,0.010125,0.0005625,0.0005625,0.0005625,
+              0.010125,0.18225,0.010125,0.0005625,0.0005625,0.010125,0.0005625,
+              0.00225,0.00225,0.0405,0.000125,0.000125,0.00225,0.0405,0.00225,
+              0.000125,0.000125)
 
     if (isTRUE(grepl(",",x))) {
       list_of_elements <- as.numeric(unlist((strsplit(x, ","))))
-      prob <- c(0.18225,0.010125,0.010125,0.010125,0.0005625,0.0005625,0.010125,0.0005625,0.0005625,
-                0.010125,0.010125,0.18225,0.0005625,0.0005625,0.010125,0.0005625,0.0005625,0.010125,
-                0.18225,0.010125,0.010125,0.010125,0.0005625,0.0005625,0.010125,0.0005625,0.0005625,
-                0.010125,0.18225,0.010125,0.0005625,0.010125,0.0005625,0.0005625,0.010125,0.0005625,
-                0.00225,0.00225,0.0405,0.000125,0.000125,0.00225,0.000125,0.000125,0.00225,0.00225,
-                0.0405,0.00225,0.000125,0.00225,0.000125,0.000125,0.00225,0.000125)
       y = list_of_elements[which.max(prob[list_of_elements])]
     } else {
       y = x
@@ -80,4 +80,5 @@ predictive_rule <- function(test_result, predictive_models){
            final_config = sapply(max_freq_config, select_final_c))
 
   return(Res)
+
 }

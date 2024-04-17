@@ -31,20 +31,20 @@
 #
 # # First test on the clear case
 # ##with given noise model
-# test0a = attribute_breakpoint(dataset,
+# test0a = Attribution_CP(dataset,
 #                              main_break,
 #                              nearby_break,
 #                              noise_model_fix = "AR(1)")
 #
 # ## identify model by itself
-# test0b = attribute_breakpoint(dataset,
+# test0b = Attribution_CP(dataset,
 #                              main_break,
 #                              nearby_break,
 #                              noise_model_fix = NULL)
 #
 # # test 1 : there is cluster in main, get error
 # main_break1 = c(main_break, main_break +10)
-# test1 = attribute_breakpoint(dataset,
+# test1 = Attribution_CP(dataset,
 #                              main_break =  main_break1,
 #                              nearby_break)
 #
@@ -52,7 +52,7 @@
 #
 # nearby_break1 <- nearby_break
 # nearby_break1$bces <- c(nearby_break1$bces, nearby_break1$bces[1] +10)
-# test2 = attribute_breakpoint(dataset,
+# test2 = Attribution_CP(dataset,
 #                              main_break = main_break,
 #                              nearby_break = nearby_break1)
 #
