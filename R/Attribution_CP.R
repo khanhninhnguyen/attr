@@ -76,11 +76,11 @@
 #'
 #'
 Attribution_CP <- function(dataset,
-                                 main_break,
-                                 nearby_break,
-                                 noise_model_fix = NULL,
-                                 nearby_weight = NULL,
-                                 limit_2side = 100){
+                           main_break,
+                           nearby_break,
+                           noise_model_fix = NULL,
+                           nearby_weight = NULL,
+                           limit_2side = 100){
   #####
   # pre-check
   Date <- candidate_config <- max_freq_config <-  NULL
@@ -108,25 +108,23 @@ Attribution_CP <- function(dataset,
 
   }
 
-  # set names and make the list of change-points
+  # check dataset include 6 series for each nearby
   list_six_diff = c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
 
-  dataset <- lapply(dataset, function(df) {
-    colnames(df) <- c("Date", list_six_diff)
-    return(df)
-  })
-
+  required_columns = lapply(c(1:length(dataset)), function(i) all(list_six_diff %in% names(dataset[[i]])))
+  stopifnot("Columns in test_result must include \
+            : Date, GE, GGp, GEp, EEp, GpEp, GpE" = all(required_columns))
 
   nearby_name <- names(dataset)
   #####
   # check cluster
 
-  cluster_main = check_cluster(Series_df = dataset[[1]],
+  cluster_main = check_cluster_CP(Series_df = dataset[[1]],
                                Name_series = "GE",
                                Break_points = main_break)
 
   cluster_other = lapply(nearby_name, function(x){
-    cluster_nearby = check_cluster(Series_df = dataset[[x]],
+    cluster_nearby = check_cluster_CP(Series_df = dataset[[x]],
                                    Name_series = "GpEp",
                                    Break_points = nearby_break[[x]])
   })

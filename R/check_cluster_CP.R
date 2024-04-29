@@ -16,7 +16,7 @@
 #'
 #' @keywords internal
 #'
-check_cluster <- function(Series_df, Name_series, Break_points) {
+check_cluster_CP <- function(Series_df, Name_series, Break_points) {
 
   if (length(Break_points) > 0 ) {
     begin_end = get_min_max_date(Series_df, Name_series)

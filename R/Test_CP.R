@@ -125,7 +125,7 @@ Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
       coef_arma$theta = ifelse("ma1" %in% names(arima.fit$coef), arima.fit$coef["ma1"], 0)
     }
 
-    fit.gls = GLS(phi = coef_arma$phi,
+    fit.gls = Fit_GLS(phi = coef_arma$phi,
                   theta = coef_arma$theta,
                   var.t = (std0)^2,
                   df_XY = df_XY)

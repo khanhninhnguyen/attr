@@ -62,12 +62,6 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
   stopifnot("Columns in test_result must include \
             : Date, GE, GGp, GEp, EEp, GpEp, GpE" = all(required_columns))
 
-  #
-  # dataset <- lapply(dataset, function(df) {
-  #   colnames(df) <-  names_col
-  #   return(df)
-  # })
-
   #####
   # Identify_model function
   # Series_df -> Series_df_One, Breakpint --> CP_One
