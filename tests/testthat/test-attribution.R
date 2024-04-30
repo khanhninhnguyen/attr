@@ -41,9 +41,9 @@ nearby_break = list(
 # First test on the clear case
 ##with given noise model
 test0a = Attribution_CP(dataset,
-                             main_break,
-                             nearby_break,
-                             noise_model_fix = "AR(1)")
+                       main_break,
+                       nearby_break,
+                       noise_model_fix = "AR(1)")
 #
 # ## identify model by itself
 # test0b = Attribution_CP(dataset,

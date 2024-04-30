@@ -34,7 +34,7 @@
 #' after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".
 #'
 #' @param noise_model_fix A list of noise models, either fixed or to be identified. If
-#' fixed, each model should be one of the following four: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
+#' fixed, each model should be  of the following four: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
 #' or 'White'. If not fixed, the noise model will be identified using the longest
 #' segment.
 #'
@@ -46,7 +46,7 @@
 #' significance testing before and after each breakpoint. This can be used to speed up
 #' the testing process. Default is NULL, which means all points are used.
 #'
-#' @return A list with four components:
+#' @return A list with four compnts:
 #'
 #' \describe{
 #'   \item{noise_model}{A data frame of the identified noise models for each of the six
