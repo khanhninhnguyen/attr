@@ -46,7 +46,7 @@
 #' significance testing before and after each breakpoint. This can be used to speed up
 #' the testing process. Default is NULL, which means all points are used.
 #'
-#' @return A list with four compnts:
+#' @return A list with four components:
 #'
 #' \describe{
 #'   \item{noise_model}{A data frame of the identified noise models for each of the six
