@@ -58,6 +58,7 @@ Prediction_CP <- function(test_result){
               0.010125,0.18225,0.010125,0.0005625,0.0005625,0.010125,0.0005625,
               0.00225,0.00225,0.0405,0.000125,0.000125,0.00225,0.0405,0.00225,
               0.000125,0.000125)
+    prob <- prob / sum(prob)
 
     if (isTRUE(grepl(",",x))) {
       list_of_elements <- as.numeric(unlist((strsplit(x, ","))))
