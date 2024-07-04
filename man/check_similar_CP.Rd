@@ -4,7 +4,7 @@
 \alias{check_similar_CP}
 \title{To check is there similar changes in the nearby stations}
 \usage{
-check_similar_CP(Six_Series, List_break_main, List_break_nearby, threshold)
+check_similar_CP(Six_Series, main_cp, nearby_cp_one, threshold)
 }
 \arguments{
 \item{Six_Series}{A data frame contains 6 time series differences (so 7 columns
@@ -13,10 +13,10 @@ be the date (in Date type on this format: "\%Y-\%m-\%d"), and the next six colum
 must be in this order:
 G-E, G-G', G-E', E-E', G'-E', G'-E.}
 
-\item{List_break_main}{A vector of main station breakpoints in Date type on this format:
+\item{main_cp}{A vector of main station breakpoints in Date type on this format:
 "\%Y-\%m-\%d".}
 
-\item{List_break_nearby}{A vector of main station breakpoints in Date type on this format:
+\item{nearby_cp_one}{A vector of main station breakpoints in Date type on this format:
 "\%Y-\%m-\%d".}
 
 \item{threshold}{Integer number is the threshold to define the number of

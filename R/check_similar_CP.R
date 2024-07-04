@@ -6,10 +6,10 @@
 #' must be in this order:
 #' G-E, G-G', G-E', E-E', G'-E', G'-E.
 #'
-#' @param List_break_main A vector of main station breakpoints in Date type on this format:
+#' @param main_cp A vector of main station breakpoints in Date type on this format:
 #' "\%Y-\%m-\%d".
 #'
-#' @param List_break_nearby A vector of main station breakpoints in Date type on this format:
+#' @param nearby_cp_one A vector of main station breakpoints in Date type on this format:
 #' "\%Y-\%m-\%d".
 #'
 #' @param threshold Integer number is the threshold to define the number of
@@ -23,7 +23,7 @@
 #' @export
 #' @keywords internal
 
-check_similar_CP <- function(Six_Series, List_break_main, List_break_nearby, threshold){
+check_similar_CP <- function(Six_Series, main_cp, nearby_cp_one, threshold){
 
   Date <- GE <- NULL
 
@@ -33,17 +33,17 @@ check_similar_CP <- function(Six_Series, List_break_main, List_break_nearby, thr
     select(Date, GE) %>%
     drop_na()
 
-  if(length(List_break_nearby) != 0){
-    for (i in c(1:length(List_break_main))) {
-      main_brp = List_break_main[i]
+  if(length( nearby_cp_one) != 0){
+    for (i in c(1:length(main_cp))) {
+      main_brp = main_cp[i]
 
       after <- main_df$Date[which(main_df$Date > main_brp)][threshold]
       before <- tail(main_df$Date[which(main_df$Date < main_brp)],threshold)[1]
 
-      ind_sim = which(List_break_nearby >= before & List_break_nearby <= after)
+      ind_sim = which( nearby_cp_one >= before &  nearby_cp_one <= after)
 
       if(length(ind_sim) > 0){
-        sim_changes <- c(sim_changes, List_break_nearby[ind_sim])
+        sim_changes <- c(sim_changes,  nearby_cp_one[ind_sim])
 
       }
     }

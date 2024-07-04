@@ -7,7 +7,7 @@
 Test_CP(
   Series_df,
   Name_series,
-  Break_point,
+  CP,
   limit = NULL,
   tol = 0.01,
   noise_model,
@@ -23,7 +23,7 @@ and the Name_series column is numeric (can be NA).}
 \item{Name_series}{The name of the column in "data" that we want to test,
 as a character string.}
 
-\item{Break_point}{A change point in Date type on this format: "\%Y-\%m-\%d"}
+\item{CP}{A change point in Date type on this format: "\%Y-\%m-\%d"}
 
 \item{limit}{An integer specifying the number of points to be used in the
 significance testing before and after each breakpoint. This can be used to speed up

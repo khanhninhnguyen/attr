@@ -4,7 +4,7 @@
 \alias{check_cluster_CP}
 \title{Check if there is a cluster in segmentation result}
 \usage{
-check_cluster_CP(Series_df, Name_series, Break_points)
+check_cluster_CP(Series_df, Name_series, CP)
 }
 \arguments{
 \item{Series_df}{A data frame contains at least 2 columns named Date and
@@ -14,7 +14,7 @@ and the Name_series column is numeric (can be NA).}
 \item{Name_series}{The name of the column in "data" that we want to test,
 as a character string.}
 
-\item{Break_points}{Vector of breakpoints in the test series in Date type
+\item{CP}{Vector of breakpoints in the test series in Date type
 on this format: "\%Y-\%m-\%d".}
 }
 \value{

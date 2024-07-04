@@ -4,7 +4,7 @@
 \alias{NoiseModel_Id}
 \title{Identify Time Series Noise Model}
 \usage{
-NoiseModel_Id(dataset, main_break, nearby_break)
+NoiseModel_Id(dataset, main_cp, nearby_cp)
 }
 \arguments{
 \item{dataset}{A list of data frames, where each data frame contains 6 time series
@@ -13,10 +13,10 @@ first column should be the date, and the next six columns must be in this order:
 G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
 of the nearby station.}
 
-\item{main_break}{A vector of main station breakpoints in Date type on this format:
+\item{main_cp}{A vector of main station breakpoints in Date type on this format:
 "\%Y-\%m-\%d".}
 
-\item{nearby_break}{A list of break point vectors for each nearby station, named
+\item{nearby_cp}{A list of break point vectors for each nearby station, named
 after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".}
 }
 \value{

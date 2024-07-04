@@ -6,10 +6,10 @@
 #' G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
 #' of the nearby station.
 #'
-#' @param main_break A vector of main station breakpoints in Date type on this format:
+#' @param main_cp A vector of main station breakpoints in Date type on this format:
 #' "\%Y-\%m-\%d".
 #'
-#' @param nearby_break A list of break point vectors for each nearby station, named
+#' @param nearby_cp A list of break point vectors for each nearby station, named
 #' after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".
 #'
 #' @return  A noise model data frame with dimensions (6 * n), where n is the
@@ -31,7 +31,7 @@
 
 #' @export
 #'
-NoiseModel_Id <- function(dataset, main_break, nearby_break){
+NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
 
   #####
   # pre-check
@@ -39,15 +39,15 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
 
   stopifnot("dataset must be a list of dataframe" = all(sapply(dataset, is.data.frame)))
 
-  stopifnot("nearby_break must be a list" = is.list(nearby_break))
+  stopifnot("nearby_cp must be a list" = is.list(nearby_cp))
 
-  stopifnot("names of dataset must be the same to nearby_break" = setequal(names(nearby_break), names(dataset)))
+  stopifnot("names of dataset must be the same to nearby_cp" = setequal(names(nearby_cp), names(dataset)))
 
-  stopifnot("dataset and nearby_break must have the same length" = (length(dataset) == length(nearby_break)))
+  stopifnot("dataset and nearby_cp must have the same length" = (length(dataset) == length(nearby_cp)))
 
 
-  if (!inherits( main_break, "Date") | any(!sapply(nearby_break, inherits, "Date"))) {
-    stop("Must specify both main_break and nearby_break in Date type")
+  if (!inherits( main_cp, "Date") | any(!sapply(nearby_cp, inherits, "Date"))) {
+    stop("Must specify both main_cp and nearby_cp in Date type")
   }
 
   if( any(!sapply(dataset, function(df) {
@@ -65,7 +65,7 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
   #####
   # Identify_model function
   # Series_df -> Series_df_One, Breakpint --> CP_One
-  identify_model <- function(Series_df, Name_series, Breakpoints,
+  identify_model <- function(Series_df, Name_series, List_CP,
                              begin_day = NULL, end_day = NULL, tol0 = 0.01, name_case = NULL, ...) {
 
     Date <- Freq <- NULL
@@ -82,12 +82,12 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
     if (is.null(begin_day) & is.null(end_day)){
 
       begin_end = get_min_max_date(Series_df, Name_series)
-      List_breaks <- sort(c(begin_end, Breakpoints))
-      longest_seg_ind = which.max(diff(List_breaks, lag = 1))
+      Endpoints <- sort(c(begin_end, List_CP))
+      longest_seg_ind = which.max(diff(Endpoints, lag = 1))
       list_day_avai = Series_df$Date[which(!is.na(Series_df[[Name_series]]))]
-      begin_day_0 = List_breaks[longest_seg_ind]
+      begin_day_0 = Endpoints[longest_seg_ind]
       begin_day = list_day_avai[which(list_day_avai > begin_day_0)[1]]
-      end_day = List_breaks[longest_seg_ind + 1]
+      end_day = Endpoints[longest_seg_ind + 1]
 
     } else{
 
@@ -247,21 +247,21 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
   }
 
   # for the main series
-  GE_mod = identify_model(dataset[[1]], Name_series = "GE", Breakpoints = main_break)
+  GE_mod = identify_model(dataset[[1]], Name_series = "GE", List_CP = main_cp)
   main_model = transform_model(GE_mod$order)
   # for the other series
   all_5_model <- sapply(names(dataset), function(x){
-    List_joint = sort(c(main_break, nearby_break[[x]]))
-    Break_points_six_series <- list(GGp = List_joint,
-                                    GEp = List_joint,
-                                    EEp = List_joint,
-                                    GpEp = nearby_break[[x]],
-                                    GpE = List_joint
+    List_joint = sort(c(main_cp, nearby_cp[[x]]))
+    List_CP_six_series <- list(GGp = List_joint,
+                                GEp = List_joint,
+                                EEp = List_joint,
+                                GpEp = nearby_cp[[x]],
+                                GpE = List_joint
     )
     sapply(names_col[3:7], function(y){
       all_mod = identify_model(dataset[[x]],
                                Name_series = y,
-                               Breakpoints = Break_points_six_series[[y]])
+                               List_CP = List_CP_six_series[[y]])
       transform_model(all_mod$order)
     })
   })

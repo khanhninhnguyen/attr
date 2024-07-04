@@ -11,7 +11,7 @@
 #' @param Name_series The name of the column in "data" that we want to test,
 #' as a character string.
 #'
-#' @param Break_point A change point in Date type on this format: "\%Y-\%m-\%d"
+#' @param CP A change point in Date type on this format: "\%Y-\%m-\%d"
 #'
 #' @param limit An integer specifying the number of points to be used in the
 #' significance testing before and after each breakpoint. This can be used to speed up
@@ -43,7 +43,7 @@
 #'
 #' @export
 #'
-Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
+Test_CP <- function(Series_df, Name_series, CP, limit = NULL,
                              tol = 0.01, noise_model, length_win = 60, name_case = NULL){
 
   Date <- .data <- wts <- NULL
@@ -61,19 +61,19 @@ Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
     tidyr:: complete(Date = seq(min(Date), max(Date), by = "day"))
 
   # check if the time series cover the Breakpoint
-  cover <- (Series_df$Date[1] < Break_point) & (Series_df$Date[length(Series_df$Date)] > Break_point)
-  stopifnot("Breakpoint must be in the Series_df" = isTRUE(cover))
+  cover <- (Series_df$Date[1] < CP) & (Series_df$Date[length(Series_df$Date)] > CP)
+  stopifnot("Changepoint must be in the Series_df" = isTRUE(cover))
 
   if (!is.null(limit)){
 
     before_data <- Series_df %>%
-      dplyr:: filter(Date <= Break_point, !is.na(.data[[Name_series]])) %>%
+      dplyr:: filter(Date <= CP, !is.na(.data[[Name_series]])) %>%
       dplyr:: arrange(Date) %>%
       dplyr:: slice_tail(n = limit)
 
     # Extract data 1000 points after the given date, including the closest points not NA
     after_data <- Series_df %>%
-      dplyr:: filter(Date > Break_point, !is.na({{Name_series}})) %>%
+      dplyr:: filter(Date > CP, !is.na({{Name_series}})) %>%
       dplyr:: arrange(Date) %>%
       dplyr:: slice_head(n = limit)
 
@@ -84,7 +84,7 @@ Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
 
   df_XY = construct_XY_df(Series_df,
                           name_series = Name_series,
-                          break_ind = which(Series_df$Date == Break_point))
+                          CP_ind = which(Series_df$Date == CP))
 
   coef_arma0 = list(phi = 0, theta = 0)
   n_full = nrow(df_XY)
@@ -190,7 +190,7 @@ Test_CP <- function(Series_df, Name_series, Break_point, limit = NULL,
          file = paste0("Res_FGLS_",
                        name_case,
                        Name_series,
-                       Break_point,
+                       CP,
                        ".RData"))
   }
 

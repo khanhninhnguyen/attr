@@ -2,32 +2,34 @@
 % Please edit documentation in R/Attribution_CP.R
 \name{Attribution_CP}
 \alias{Attribution_CP}
-\title{Predict the origin of breakpoints in the main station}
+\title{Predict the origin of changepoints in the main station}
 \usage{
 Attribution_CP(
   dataset,
-  main_break,
-  nearby_break,
+  main_cp,
+  nearby_cp,
   noise_model_fix = NULL,
   nearby_weight = NULL,
   limit_2side = 100
 )
 }
 \arguments{
-\item{dataset}{A list of data frames, where each data frame contains 6 time series
+\item{dataset}{A list of data frames, EACH DATAFRAME NAMED BY EACH NEARBY STATION.
+eACH DATAFRAME HAVE 7 COLUMNS
+ where each data frame contains 6 time series
 differences (so 7 columns in total) between a main station and a nearby station. The
 first column should be the date, and the next six columns must be in this order:
 G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
-of the nearby station.}
+of the nearby station. DESCRIBE MORE PRECISELY ...}
 
-\item{main_break}{A vector of main station breakpoints in Date type on this format:
+\item{main_cp}{A vector of main station change points in Date type on this format:
 "\%Y-\%m-\%d".}
 
-\item{nearby_break}{A list of break point vectors for each nearby station, named
+\item{nearby_cp}{A list of change point vectors for each nearby station. named
 after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".}
 
 \item{noise_model_fix}{A list of noise models, either fixed or to be identified. If
-fixed, each model should be one of the following four: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
+fixed, each model should be  of the following four: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
 or 'White'. If not fixed, the noise model will be identified using the longest
 segment.}
 
@@ -37,7 +39,7 @@ equal weight. The length of the vector should be the same as the
 number of nearby stations.}
 
 \item{limit_2side}{An integer specifying the number of points to be used in the
-significance testing before and after each breakpoint. This can be used to speed up
+significance testing before and after each changepoint. This can be used to speed up
 the testing process. Default is NULL, which means all points are used.}
 }
 \value{
@@ -48,25 +50,25 @@ A list with four components:
 difference series between the main station and each nearby station. Each element is
 a string indicating the noise model (e.g, 'AR(1)', 'MA(1)', etc)}
   \item{test_results}{A list of data frames, where each data frame contains the test
-results for each breakpoint and each nearby station. The columns are the names of the
+results for each changepoint and each nearby station. The columns are the names of the
 nearby stations, and the rows are the six difference series.}
   \item{prediction_results}{A list of data frames containing the predicted
-configuration for each breakpoint and nearby station. Each data frame is named
+configuration for each changepoint and nearby station. Each data frame is named
 after the corresponding nearby station and contains three columns: the
 candidate configuration with the highest frequency after running 24 models,
 the probability of the candidate, and the final configuration. Each row
 corresponds to a nearby station.}
   \item{aggregated_results}{ A data frame of the aggregated prediction results
-for each breakpoint, based on the weights specified in nearby_weight. This data
+for each changepoint, based on the weights specified in nearby_weight. This data
 frame is presented in a similar format to the prediction_results data frame for
 a single case}
 }
 }
 \description{
-This function predicts the origin of each breakpoint in the main station by testing
+This function predicts the origin of each changepoint in the main station by testing
 the significance of jumps across six difference series for each main-nearby station
 pair. It then predicts the configuration using a predictive rule and aggregates the
-results for each breakpoint from all nearby stations.
+results for each changepoint from all nearby stations.
 }
 \details{
 The function has four main steps:
@@ -80,6 +82,6 @@ series using the identified noise model.
 3. Configuration prediction: Predict the configuration of the main station and the
 nearby station based on the test results.
 
-4. Aggregation: Aggregate the prediction results for each breakpoint from all nearby
+4. Aggregation: Aggregate the prediction results for each changepoint from all nearby
 stations.
 }

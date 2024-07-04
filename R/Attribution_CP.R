@@ -1,10 +1,10 @@
-#' Predict the origin of breakpoints in the main station
+#' Predict the origin of changepoints in the main station
 #'
 #' @description
-#' This function predicts the origin of each breakpoint in the main station by testing
+#' This function predicts the origin of each changepoint in the main station by testing
 #' the significance of jumps across six difference series for each main-nearby station
 #' pair. It then predicts the configuration using a predictive rule and aggregates the
-#' results for each breakpoint from all nearby stations.
+#' results for each changepoint from all nearby stations.
 #'
 #' @details
 #' The function has four main steps:
@@ -18,19 +18,21 @@
 #' 3. Configuration prediction: Predict the configuration of the main station and the
 #' nearby station based on the test results.
 #'
-#' 4. Aggregation: Aggregate the prediction results for each breakpoint from all nearby
+#' 4. Aggregation: Aggregate the prediction results for each changepoint from all nearby
 #' stations.
 #'
-#' @param dataset A list of data frames, where each data frame contains 6 time series
+#' @param dataset A list of data frames, EACH DATAFRAME NAMED BY EACH NEARBY STATION.
+#' eACH DATAFRAME HAVE 7 COLUMNS
+#'  where each data frame contains 6 time series
 #' differences (so 7 columns in total) between a main station and a nearby station. The
 #' first column should be the date, and the next six columns must be in this order:
 #' G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
-#' of the nearby station.
+#' of the nearby station. DESCRIBE MORE PRECISELY ...
 #'
-#' @param main_break A vector of main station breakpoints in Date type on this format:
+#' @param main_cp A vector of main station change points in Date type on this format:
 #' "\%Y-\%m-\%d".
 #'
-#' @param nearby_break A list of break point vectors for each nearby station, named
+#' @param nearby_cp A list of change point vectors for each nearby station. named
 #' after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".
 #'
 #' @param noise_model_fix A list of noise models, either fixed or to be identified. If
@@ -43,7 +45,7 @@
 #' equal weight. The length of the vector should be the same as the
 #' number of nearby stations.
 #' @param limit_2side An integer specifying the number of points to be used in the
-#' significance testing before and after each breakpoint. This can be used to speed up
+#' significance testing before and after each changepoint. This can be used to speed up
 #' the testing process. Default is NULL, which means all points are used.
 #'
 #' @return A list with four components:
@@ -53,16 +55,16 @@
 #' difference series between the main station and each nearby station. Each element is
 #' a string indicating the noise model (e.g, 'AR(1)', 'MA(1)', etc)}
 #'   \item{test_results}{A list of data frames, where each data frame contains the test
-#' results for each breakpoint and each nearby station. The columns are the names of the
+#' results for each changepoint and each nearby station. The columns are the names of the
 #' nearby stations, and the rows are the six difference series.}
 #'   \item{prediction_results}{A list of data frames containing the predicted
-#' configuration for each breakpoint and nearby station. Each data frame is named
+#' configuration for each changepoint and nearby station. Each data frame is named
 #' after the corresponding nearby station and contains three columns: the
 #' candidate configuration with the highest frequency after running 24 models,
 #' the probability of the candidate, and the final configuration. Each row
 #' corresponds to a nearby station.}
 #'   \item{aggregated_results}{ A data frame of the aggregated prediction results
-#' for each breakpoint, based on the weights specified in nearby_weight. This data
+#' for each changepoint, based on the weights specified in nearby_weight. This data
 #' frame is presented in a similar format to the prediction_results data frame for
 #' a single case}
 #' }
@@ -76,8 +78,8 @@
 #'
 #'
 Attribution_CP <- function(dataset,
-                           main_break,
-                           nearby_break,
+                           main_cp,
+                           nearby_cp,
                            noise_model_fix = NULL,
                            nearby_weight = NULL,
                            limit_2side = 100){
@@ -89,15 +91,15 @@ Attribution_CP <- function(dataset,
 
   stopifnot("dataset must be a list of dataframe" = all(sapply(dataset, is.data.frame)))
 
-  stopifnot("nearby_break must be a list" = is.list(nearby_break))
+  stopifnot("nearby_cp must be a list" = is.list(nearby_cp))
 
-  stopifnot("names of dataset must be the same to nearby_break" = setequal(names(nearby_break), names(dataset)))
+  stopifnot("names of dataset must be the same to nearby_cp" = setequal(names(nearby_cp), names(dataset)))
 
-  stopifnot("dataset and nearby_break must have the same length" = (length(dataset) == length(nearby_break)))
+  stopifnot("dataset and nearby_cp must have the same length" = (length(dataset) == length(nearby_cp)))
 
 
-  if (!inherits( main_break, "Date") | any(!sapply(nearby_break, inherits, "Date"))) {
-    stop("Must specify both main_break and nearby_break in Date type")
+  if (!inherits( main_cp, "Date") | any(!sapply(nearby_cp, inherits, "Date"))) {
+    stop("Must specify both main_cp and nearby_cp in Date type")
   }
 
   if( any(!sapply(dataset, function(df) {
@@ -121,12 +123,12 @@ Attribution_CP <- function(dataset,
 
   cluster_main = check_cluster_CP(Series_df = dataset[[1]],
                                Name_series = "GE",
-                               Break_points = main_break)
+                               CP = main_cp)
 
   cluster_other = lapply(nearby_name, function(x){
     cluster_nearby = check_cluster_CP(Series_df = dataset[[x]],
                                    Name_series = "GpEp",
-                                   Break_points = nearby_break[[x]])
+                                   CP = nearby_cp[[x]])
   })
 
   check_clusters <- sapply(cluster_other, function(df) any(df$cluster != 0))
@@ -146,7 +148,7 @@ Attribution_CP <- function(dataset,
   #####
   # Model identification
   if (is.null(noise_model_fix)) {
-    Noise_model <- NoiseModel_Id(dataset, main_break, nearby_break)
+    Noise_model <- NoiseModel_Id(dataset, main_cp, nearby_cp)
   } else {
     Noise_model <- data.frame(matrix(noise_model_fix,
                                      ncol = length(nearby_name),
@@ -178,29 +180,29 @@ Attribution_CP <- function(dataset,
 
   similar_cp <- lapply(nearby_name, function(x) {
     check_similar_CP(Six_Series = dataset[[x]],
-                     List_break_main = main_break,
-                     List_break_nearby = nearby_break[[x]],
+                     main_cp = main_cp,
+                     nearby_cp_one = nearby_cp[[x]],
                      threshold = 10)
   })
 
   check_similar <- sapply(similar_cp, function(x) length(x)>0)
 
-  nearby_break_m = nearby_break
+  nearby_cp_m = nearby_cp
 
   if(any(check_similar)) {
     ind_change = which(check_similar)
     for (i in ind_change) {
-      list_brp_nb <- nearby_break[[nearby_name[i]]]
-      nearby_break_m[[nearby_name[i]]] <- list_brp_nb [ which(!list_brp_nb %in% similar_cp [[i]])]
+      list_brp_nb <- nearby_cp[[nearby_name[i]]]
+      nearby_cp_m[[nearby_name[i]]] <- list_brp_nb [ which(!list_brp_nb %in% similar_cp [[i]])]
     }
   }
 
   #####
   # Significance test for the jump in the main
-  test_sig <- function(List_break, Breakpoint, df, Name_series, noise_model, limit_period) {
+  test_sig <- function(List_CP, CP, df, Name_series, noise_model, limit_period) {
 
-    begin <-  List_break[tail(which(List_break < Breakpoint),1)]
-    end <- List_break[which( List_break > Breakpoint)[1]]
+    begin <-  List_CP[tail(which(List_CP < CP),1)]
+    end <- List_CP[which( List_CP > CP)[1]]
 
     if (length(begin) == 0 | length(end) ==0) {
 
@@ -212,7 +214,7 @@ Attribution_CP <- function(dataset,
         dplyr:: filter(Date > begin & Date <= end)
       fit_fgls <- Test_CP(Series_df = data_test,
                                    Name_series = Name_series,
-                                   Break_point = Breakpoint,
+                                   CP = CP,
                                    noise_model = noise_model,
                                    limit = limit_period,
                                    name_case = NULL)
@@ -224,15 +226,15 @@ Attribution_CP <- function(dataset,
     return(t_val_jump)
   }
 
-  List_break_main <- sort( c( main_break,
+  List_CP_main <- sort( c( main_cp,
                               get_min_max_date(data = dataset[[1]],
                                                column_name = "GE")))
 
-  t_values_main = sapply(main_break, function(x) {
+  t_values_main = sapply(main_cp, function(x) {
     t_val <- NA
     tryCatch({
-      t_val <- test_sig(List_break = List_break_main,
-                        Breakpoint = x,
+      t_val <- test_sig(List_CP = List_CP_main,
+                        CP = x,
                         df = dataset[[1]],
                         Name_series = "GE",
                         noise_model = unlist(Noise_model_order[1,1]),
@@ -246,20 +248,20 @@ Attribution_CP <- function(dataset,
   # Significance test for the other 5 test
   t_values_other = lapply(nearby_name, function(x) {
     t <- NA
-    nearby_break_z <- sort(c(nearby_break[[x]],
+    nearby_cp_z <- sort(c(nearby_cp[[x]],
                              get_min_max_date(data = dataset[[x]],
                                               column_name = "GpEp")))
 
-    List_joint = sort(c(List_break_main, nearby_break_z))
+    List_joint = sort(c(List_CP_main, nearby_cp_z))
 
-    Break_points_five_series <- list(GGp = List_joint,
-                                     GEp = List_joint,
-                                     EEp = List_joint,
-                                     GpEp = nearby_break_z,
-                                     GpE = List_joint
+    CP_five_series <- list(GGp = List_joint,
+                           GEp = List_joint,
+                           EEp = List_joint,
+                           GpEp = nearby_cp_z,
+                           GpE = List_joint
     )
 
-    t_val_all_brk <- sapply(main_break, function(y){
+    t_val_all_brk <- sapply(main_cp, function(y){
 
       five_t_val <- sapply(list_six_diff[-1], function(z){
 
@@ -267,8 +269,8 @@ Attribution_CP <- function(dataset,
 
         tryCatch({
           # Attempt to run the problematic function
-          t <- test_sig(List_break = Break_points_five_series[[z]],
-                        Breakpoint = y,
+          t <- test_sig(List_CP = CP_five_series[[z]],
+                        CP = y,
                         df = dataset[[x]],
                         Name_series = z,
                         noise_model = noise_model_z,
@@ -293,18 +295,18 @@ Attribution_CP <- function(dataset,
     new_row <- matrix(t_values_main, nrow = 1) # Create a new row of zeros (change this as needed)
     y <- rbind(new_row, x) # Bind the new row at the top
     rownames(y)[1] <- "GE"
-    colnames(y) <- as.character(main_break)
+    colnames(y) <- as.character(main_cp)
     y
   })
 
   #####
   # Prediction
-  t_val_all <- lapply(main_break, function(x) {
+  t_val_all <- lapply(main_cp, function(x) {
     z = sapply(t_val_all, function(y) {
       y[,which(as.Date(colnames(y),format = "%Y-%m-%d") == x)]
     })
   })
-  names(t_val_all) <- main_break
+  names(t_val_all) <- main_cp
 
   # help functions
   most_frequent_with_ties <- function(x) {
@@ -337,7 +339,7 @@ Attribution_CP <- function(dataset,
     return(max_counts)
   }
 
-  Predict_ind_result <- lapply(as.character(main_break), function(x) {
+  Predict_ind_result <- lapply(as.character(main_cp), function(x) {
 
     new_df = na.omit(as.data.frame(t(t_val_all[[x]])))
 
@@ -349,7 +351,7 @@ Attribution_CP <- function(dataset,
     }
     return(prediction)
   })
-  names(Predict_ind_result) <- main_break
+  names(Predict_ind_result) <- main_cp
 
   #####
   # Aggregation

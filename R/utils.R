@@ -48,7 +48,7 @@ get_min_max_date <- function(data, column_name) {
 #'
 #' @param df_XY A data frame resulted from construct_XY_df that includes a column
 #' of the signal (Y) and columns of X: 8 Fourier components (if selected), a global
-#' mean column, and a jump column (if break_ind is not NULL).
+#' mean column, and a jump column (if CP_ind is not NULL).
 #'
 #' @return A list containing the estimates and their standard errors, t-values,
 #'  and p-values.
@@ -91,7 +91,7 @@ Fit_GLS <- function(phi, theta, var.t, df_XY){
   }
 
   # estimate
-  X = as.matrix(df_XY%>% dplyr::select(-signal))
+  X = as.matrix(df_XY %>% dplyr::select(-all_of(signal)))
   X = X[ind1,]
   term2 = solve(cov.var)
   term1 = t(X) %*% term2 %*% X
@@ -209,7 +209,7 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 #' @param name_series The name of the column in "data" that we want to test,
 #' as a character string.
 #'
-#' @param break_ind The index of the break if the offset is included in the model,
+#' @param CP_ind The index of the break if the offset is included in the model,
 #' as an integer.
 #'
 #' @param Fourier  A logical value indicating whether to include Fourier elements
@@ -217,7 +217,7 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 #'
 #' @return A data frame used for testing that includes a column of the signal (Y)
 #' and columns of X: 8 Fourier components (if selected), a global column, and a
-#' jump column (if break_ind is not NULL).
+#' jump column (if CP_ind is not NULL).
 #'
 #' @importFrom dplyr select rename filter mutate %>%
 #'
@@ -225,7 +225,7 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 #'
 #' @noRd
 
-construct_XY_df <- function(data, name_series, break_ind = NULL, Fourier = TRUE){
+construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
 
   signal <- Date <- complete.time <- NULL
 
@@ -241,7 +241,7 @@ construct_XY_df <- function(data, name_series, break_ind = NULL, Fourier = TRUE)
 
   Data_XY <- Data_XY %>%
     mutate(complete.time = 1:nrow(Data_XY)) %>%
-    select(-Date)
+    select(-all_of("Date"))
 
   if(isTRUE(Fourier)){
     for (i in 1:4){
@@ -252,12 +252,12 @@ construct_XY_df <- function(data, name_series, break_ind = NULL, Fourier = TRUE)
   }
 
   Data_XY <- Data_XY %>%
-    select(-complete.time)
+    select(-all_of(complete.time))
 
   n0 = nrow(Data_XY)
 
-  if(!is.null(break_ind)){
-    Data_XY$right = c(rep(0, break_ind), rep(1, (n0-break_ind)))
+  if(!is.null(CP_ind)){
+    Data_XY$right = c(rep(0, CP_ind), rep(1, (n0-CP_ind)))
   }
 
   Data_XY$left = rep(1, nrow(Data_XY))

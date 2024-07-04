@@ -7,7 +7,7 @@
 #' @param Name_series The name of the column in "data" that we want to test,
 #' as a character string.
 #'
-#' @param Break_points Vector of breakpoints in the test series in Date type
+#' @param CP Vector of breakpoints in the test series in Date type
 #' on this format: "\%Y-\%m-\%d".
 #'
 #' @return Vector of break points in a cluster in Date type
@@ -16,11 +16,11 @@
 #'
 #' @keywords internal
 #'
-check_cluster_CP <- function(Series_df, Name_series, Break_points) {
+check_cluster_CP <- function(Series_df, Name_series, CP) {
 
-  if (length(Break_points) > 0 ) {
+  if (length(CP) > 0 ) {
     begin_end = get_min_max_date(Series_df, Name_series)
-    List_breaks <- sort(c(begin_end, Break_points))
+    List_breaks <- sort(c(begin_end, CP))
 
     get_cluster <- function(X, thres = 80){
       output <- integer(length(X))
@@ -65,7 +65,7 @@ check_cluster_CP <- function(Series_df, Name_series, Break_points) {
       }
     }
 
-    Res <- data.frame(breakpoints = Break_points,
+    Res <- data.frame(breakpoints = CP,
                       cluster = clust[c(-1, -length(clust))])
   } else {
     Res <- data.frame(cluster = 0)
