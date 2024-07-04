@@ -111,7 +111,7 @@ Attribution_CP <- function(dataset,
   # check dataset include 6 series for each nearby
   list_six_diff = c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
 
-  required_columns = lapply(c(1:length(dataset)), function(i) all(list_six_diff %in% names(dataset[[i]])))
+  required_columns = sapply(c(1:length(dataset)), function(i) all(list_six_diff %in% names(dataset[[i]])))
   stopifnot("Columns in test_result must include \
             : Date, GE, GGp, GEp, EEp, GpEp, GpE" = all(required_columns))
 

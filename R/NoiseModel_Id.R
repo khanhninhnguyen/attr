@@ -58,7 +58,7 @@ NoiseModel_Id <- function(dataset, main_break, nearby_break){
   }
 
   names_col = c("Date", "GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
-  required_columns = lapply(c(1:length(dataset)), function(i) all(names_col %in% names(dataset[[i]])))
+  required_columns = sapply(c(1:length(dataset)), function(i) all(names_col %in% names(dataset[[i]])))
   stopifnot("Columns in test_result must include \
             : Date, GE, GGp, GEp, EEp, GpEp, GpE" = all(required_columns))
 
