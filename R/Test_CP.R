@@ -35,7 +35,7 @@
 #' in the model, and the 4 columns correspond to the estimates, their standard errors,
 #' t-values, and p-values.
 #'
-#' @importFrom dplyr select filter slice_tail slice_head arrange all_of
+#' @importFrom dplyr filter slice_tail slice_head arrange all_of
 #'
 #' @importFrom tidyr complete
 #'
@@ -55,8 +55,8 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL,
   start_time <- Sys.time()
 
   # creat the XY dataframe
-  Series_df <- Series_df %>%
-    dplyr:: select(all_of(c(Name_series,"Date"))) %>%
+  Series_df <- Series_df [, c(Name_series,"Date")] %>%
+    # dplyr:: select(all_of(c(Name_series,"Date"))) %>%
     dplyr:: filter(!is.na(.data[[Name_series]])) %>%
     tidyr:: complete(Date = seq(min(Date), max(Date), by = "day"))
 

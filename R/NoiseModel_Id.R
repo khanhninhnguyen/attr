@@ -102,7 +102,6 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
       tidyr::complete(Date = seq(begin_day, end_day, by = "day"))
 
     # Run the regression
-
     m = construct_XY_df(df_data, name_series = Name_series)
     nna_ind = which(!is.na(m$signal))
     norm_res <- rep(NA, nrow(m))

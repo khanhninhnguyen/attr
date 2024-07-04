@@ -91,7 +91,7 @@ Fit_GLS <- function(phi, theta, var.t, df_XY){
   }
 
   # estimate
-  X = as.matrix(df_XY %>% dplyr::select(-all_of(signal)))
+  X = as.matrix(df_XY[, !(names(df_XY) %in% "signal"), drop = FALSE])
   X = X[ind1,]
   term2 = solve(cov.var)
   term1 = t(X) %*% term2 %*% X
@@ -219,7 +219,7 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 #' and columns of X: 8 Fourier components (if selected), a global column, and a
 #' jump column (if CP_ind is not NULL).
 #'
-#' @importFrom dplyr select rename filter mutate %>%
+#' @importFrom dplyr rename filter mutate %>%
 #'
 #' @importFrom tidyr complete
 #'
@@ -232,16 +232,19 @@ construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
   data$Date = as.Date(data$Date, format = "%Y-%m-%d")
 
   Data_XY <- data %>%
-    dplyr:: select(any_of(c(name_series,"Date"))) %>%
-    dplyr:: rename(signal = name_series) %>%
+    dplyr:: select(all_of(c(name_series,"Date")))
+  colnames(Data_XY)[colnames(Data_XY) == name_series] <- "signal"
+  Data_XY <- Data_XY %>%
     dplyr:: filter(!is.na(signal)) %>%
     tidyr:: complete(Date = seq(min(Date), max(Date), by = "day"))
 
   one.year = 365
 
   Data_XY <- Data_XY %>%
-    mutate(complete.time = 1:nrow(Data_XY)) %>%
-    select(-all_of("Date"))
+    dplyr:: mutate(complete.time = 1:nrow(Data_XY))
+
+  Data_XY <- Data_XY %>%
+    dplyr:: select(-all_of("Date"))
 
   if(isTRUE(Fourier)){
     for (i in 1:4){
@@ -252,7 +255,7 @@ construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
   }
 
   Data_XY <- Data_XY %>%
-    select(-all_of(complete.time))
+    dplyr:: select(-all_of(complete.time))
 
   n0 = nrow(Data_XY)
 

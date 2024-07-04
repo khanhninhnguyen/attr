@@ -105,39 +105,39 @@ exp_NoiseModel = data.frame(
   row.names = c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
 )
 
-test_that("Check similar change points", {
+test_that("Check model identification", {
   expect_identical(NoiseModel_Id(dataset = dataset[c("bces", "ptaa")],
                                  main_cp = main_cp,
                                  nearby_cp = nearby_cp[c("bces", "ptaa")]),
                    exp_NoiseModel)
 })
 
-# First test on the clear case
-##with given noise model
-# test0a = Attribution_CP(dataset,
-#                        main_break,
-#                        nearby_break,
-#                        noise_model_fix = "AR(1)")
-#
-# ## identify model by itself
-# test0b = Attribution_CP(dataset,
-#                              main_break,
-#                              nearby_break,
-#                              noise_model_fix = NULL)
-#
-# # test 1 : there is cluster in main, get error
-# main_break1 = c(main_break, main_break +10)
-# test1 = Attribution_CP(dataset,
-#                              main_break =  main_break1,
-#                              nearby_break)
-#
-# # test 2 : there is cluster in nearby, get error
-#
-# nearby_break1 <- nearby_break
-# nearby_break1$bces <- c(nearby_break1$bces, nearby_break1$bces[1] +10)
-# test2 = Attribution_CP(dataset,
-#                              main_break = main_break,
-#                              nearby_break = nearby_break1)
-#
-#
-#
+# # First test on the clear case
+# ##with given noise model
+# # test0a = Attribution_CP(dataset,
+# #                        main_break,
+# #                        nearby_break,
+# #                        noise_model_fix = "AR(1)")
+# #
+# # ## identify model by itself
+# # test0b = Attribution_CP(dataset,
+# #                              main_break,
+# #                              nearby_break,
+# #                              noise_model_fix = NULL)
+# #
+# # # test 1 : there is cluster in main, get error
+# # main_break1 = c(main_break, main_break +10)
+# # test1 = Attribution_CP(dataset,
+# #                              main_break =  main_break1,
+# #                              nearby_break)
+# #
+# # # test 2 : there is cluster in nearby, get error
+# #
+# # nearby_break1 <- nearby_break
+# # nearby_break1$bces <- c(nearby_break1$bces, nearby_break1$bces[1] +10)
+# # test2 = Attribution_CP(dataset,
+# #                              main_break = main_break,
+# #                              nearby_break = nearby_break1)
+# #
+# #
+# #
