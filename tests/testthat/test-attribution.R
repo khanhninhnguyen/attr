@@ -1,6 +1,6 @@
 rm(list=ls())
 # devtools::load_all()
-
+library(testthat)
 # load data and make them in a good form
 
 predictive_models = readRDS(file = system.file("extdata", "Rf.RDS",
@@ -98,10 +98,9 @@ test_that("Check similar change points", {
 
 # Test Model Identification -----------------------------------------------
 
-
 exp_NoiseModel = data.frame(
-  bces = c(rep("ARMA(1,1)", 3), "AR(1)", rep("ARMA(1,1)", 2)),
-  ptaa = c("ARMA(1,1)", rep("AR(1)", 5)),
+  bces = c("ARMA(1,1)", "AR(1)", "ARMA(1,1)", "AR(1)", "ARMA(1,1)", "ARMA(1,1)"),
+  ptaa = c("ARMA(1,1)", rep("AR(1)", 3), "ARMA(1,1)", "AR(1)"),
   row.names = c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
 )
 
@@ -112,32 +111,67 @@ test_that("Check model identification", {
                    exp_NoiseModel)
 })
 
-# # First test on the clear case
-# ##with given noise model
-# # test0a = Attribution_CP(dataset,
-# #                        main_break,
-# #                        nearby_break,
-# #                        noise_model_fix = "AR(1)")
-# #
-# # ## identify model by itself
-# # test0b = Attribution_CP(dataset,
-# #                              main_break,
-# #                              nearby_break,
-# #                              noise_model_fix = NULL)
-# #
-# # # test 1 : there is cluster in main, get error
-# # main_break1 = c(main_break, main_break +10)
-# # test1 = Attribution_CP(dataset,
-# #                              main_break =  main_break1,
-# #                              nearby_break)
-# #
-# # # test 2 : there is cluster in nearby, get error
-# #
-# # nearby_break1 <- nearby_break
-# # nearby_break1$bces <- c(nearby_break1$bces, nearby_break1$bces[1] +10)
-# # test2 = Attribution_CP(dataset,
-# #                              main_break = main_break,
-# #                              nearby_break = nearby_break1)
-# #
-# #
-# #
+
+# Test the test of significance of change-point (Test_CP.R) ------------------
+
+t = Test_CP(dataset$bces, Name_series = "GE", CP = main_cp[1],
+                 noise_model = c(1,0,1), limit = 100)
+
+test_that("Check test of one change-point", {
+  expect_identical(t$summary$`t value`[which(rownames(t$summary) == "right")],
+                   -2.58)
+})
+
+
+# Test the Attribution_CP -------------------------------------------------
+
+## Case 1: fix 1 noise model for all series
+test_Attribution_CP_c1 = Attribution_CP(dataset,
+                        main_cp = main_cp,
+                        nearby_cp = nearby_cp,
+                        noise_model_fix = "AR(1)")
+
+test_that("Attribution", {
+  expect_identical(unique(as.vector(as.matrix(test_Attribution_CP_c1$Noise_model))),
+                   "AR(1)")
+  expect_identical(unlist(test_Attribution_CP_c1$Test_result[[as.character(main_cp)]])[4,4],
+                   -0.386)
+  expect_identical(as.character(test_Attribution_CP_c1$Prediction_agg[[as.character(main_cp)]])[1],
+                   "23")
+})
+
+## Case 2: unknown noise model for all series
+test_Attribution_CP_c2 = Attribution_CP(dataset,
+                                        main_cp = main_cp,
+                                        nearby_cp = nearby_cp,
+                                        noise_model_fix = NULL)
+
+test_that("Attribution", {
+  expect_identical(test_Attribution_CP_c2$Noise_model[,c("bces", "ptaa")],
+                   exp_NoiseModel)
+  expect_identical(unlist(test_Attribution_CP_c2$Test_result[[as.character(main_cp)]])[6,4],
+                   -1.7)
+  expect_identical(as.character(test_Attribution_CP_c2$Prediction_agg[[as.character(main_cp)]])[1],
+                   "23")
+})
+
+
+# Test prediction ---------------------------------------------------------
+
+test_that("Prediction", {
+  expect_error(Prediction_CP(c(2,2,2,1,1,1)),
+               "test_result must be a data frame", fixed = TRUE)
+  expect_error(Prediction_CP(data.frame(2,2,2,1,1,1)),
+               "Columns in test_result must be : GE, GGp, GEp, EEp, GpEp, GpE",
+               fixed = TRUE)
+  expect_identical(
+    as.character(
+      Prediction_CP(data.frame(GE = 2, GGp = 2, GEp = 2, EEp = 1, GpEp = 1, GpE = 1))$final_config),
+    "1")
+
+
+})
+
+Prediction_CP(2,2,2,1,1,1)
+
+

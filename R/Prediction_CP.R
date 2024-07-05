@@ -27,8 +27,7 @@ Prediction_CP <- function(test_result){
   stopifnot("test_result must be a data frame" = is.data.frame(test_result))
   stopifnot("test_result must have 6 columns" = (ncol(test_result)==6))
   required_columns = all(c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE") %in% names(test_result))
-  stopifnot("Columns in test_result must be \
-            : GE, GGp, GEp, EEp, GpEp, GpE" = isTRUE(required_columns))
+  stopifnot("Columns in test_result must be : GE, GGp, GEp, EEp, GpEp, GpE" = isTRUE(required_columns))
 
   # Apply RF models
   candidate_config <- data.frame(matrix(NA,

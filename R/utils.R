@@ -219,7 +219,7 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 #' and columns of X: 8 Fourier components (if selected), a global column, and a
 #' jump column (if CP_ind is not NULL).
 #'
-#' @importFrom dplyr rename filter mutate %>%
+#' @importFrom dplyr select filter mutate %>% all_of
 #'
 #' @importFrom tidyr complete
 #'
@@ -227,23 +227,20 @@ Sliding_std <- function(Y, name.var, length.wind = 60){
 
 construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
 
+  one.year = 365
   signal <- Date <- complete.time <- NULL
 
   data$Date = as.Date(data$Date, format = "%Y-%m-%d")
 
   Data_XY <- data %>%
     dplyr:: select(all_of(c(name_series,"Date")))
+
   colnames(Data_XY)[colnames(Data_XY) == name_series] <- "signal"
+
   Data_XY <- Data_XY %>%
     dplyr:: filter(!is.na(signal)) %>%
-    tidyr:: complete(Date = seq(min(Date), max(Date), by = "day"))
-
-  one.year = 365
-
-  Data_XY <- Data_XY %>%
-    dplyr:: mutate(complete.time = 1:nrow(Data_XY))
-
-  Data_XY <- Data_XY %>%
+    tidyr:: complete(Date = seq(min(Date), max(Date), by = "day")) %>%
+    dplyr:: mutate(complete.time = 1:nrow(Data_XY)) %>%
     dplyr:: select(-all_of("Date"))
 
   if(isTRUE(Fourier)){
@@ -255,7 +252,7 @@ construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
   }
 
   Data_XY <- Data_XY %>%
-    dplyr:: select(-all_of(complete.time))
+    dplyr:: select(-all_of("complete.time"))
 
   n0 = nrow(Data_XY)
 
