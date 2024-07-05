@@ -3,10 +3,10 @@ rm(list=ls())
 library(testthat)
 # load data and make them in a good form
 
-predictive_models = readRDS(file = system.file("extdata", "Rf.RDS",
+predictive_models = readRDS(file = system.file("extdata", "PredictiveRule.RDS",
                                                package = "attr"))
 
-dataset <- get(load(file = system.file("extdata", "test.RData",
+dataset <- get(load(file = system.file("extdata", "data.RData",
                                        package = "attr")))
 
 dataset <- lapply(dataset, function(x) {
@@ -155,7 +155,20 @@ test_that("Attribution", {
                    "23")
 })
 
+## Case 3: known noise model for each series
+test_Attribution_CP_c3 = Attribution_CP(dataset[c("bces", "ptaa")],
+                                        main_cp = main_cp,
+                                        nearby_cp = nearby_cp[c("bces", "ptaa")],
+                                        noise_model_fix = exp_NoiseModel)
 
+test_that("Attribution", {
+  expect_identical(test_Attribution_CP_c2$Noise_model[,c("bces", "ptaa")],
+                   exp_NoiseModel)
+  expect_identical(unlist(test_Attribution_CP_c2$Test_result[[as.character(main_cp)]])[6,4],
+                   -1.7)
+  expect_identical(as.character(test_Attribution_CP_c2$Prediction_agg[[as.character(main_cp)]])[1],
+                   "23")
+})
 # Test prediction ---------------------------------------------------------
 
 test_that("Prediction", {
@@ -168,10 +181,7 @@ test_that("Prediction", {
     as.character(
       Prediction_CP(data.frame(GE = 2, GGp = 2, GEp = 2, EEp = 1, GpEp = 1, GpE = 1))$final_config),
     "1")
-
-
 })
 
-Prediction_CP(2,2,2,1,1,1)
 
 

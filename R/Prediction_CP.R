@@ -19,7 +19,7 @@
 Prediction_CP <- function(test_result){
 
   # load predictive models
-  predictive_models = readRDS(file = system.file("extdata", "Rf.RDS", package = "attr"))
+  predictive_models = readRDS(file = system.file("extdata", "PredictiveRule.RDS", package = "attr"))
 
   Freq <- max_freq_config <- NULL
 

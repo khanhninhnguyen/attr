@@ -2,7 +2,7 @@
 % Please edit documentation in R/Attribution_CP.R
 \name{Attribution_CP}
 \alias{Attribution_CP}
-\title{Predict the origin of changepoints in the main station}
+\title{Predict the Origin of Change-Points}
 \usage{
 Attribution_CP(
   dataset,
@@ -14,41 +14,47 @@ Attribution_CP(
 )
 }
 \arguments{
-\item{dataset}{A list of data frames, EACH DATAFRAME NAMED BY EACH NEARBY STATION.
-eACH DATAFRAME HAVE 7 COLUMNS
- where each data frame contains 6 time series
-differences (so 7 columns in total) between a main station and a nearby station. The
-first column should be the date, and the next six columns must be in this order:
-G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
-of the nearby station. DESCRIBE MORE PRECISELY ...}
+\item{dataset}{A list where:
+ - Each element represents a main-nearby station pair, named after the nearby station.
+ - Each element is a data frame with 7 columns:
+   1. Date: In format "YYYY-MM-DD"
+   2-7. GE, GGp, GEp, EEp, GpEp, GpE: Numeric, representing six difference series.
+The difference series are:
+GPS-ERA, GPS-GPS', GPS-ERA', ERA-ERA', GPS'-ERA', GPS'-ERA, respectively.}
 
-\item{main_cp}{A vector of main station change points in Date type on this format:
-"\%Y-\%m-\%d".}
+\item{main_cp}{A vector of change-points in the main station (in Date format: "\%Y-\%m-\%d").}
 
-\item{nearby_cp}{A list of change point vectors for each nearby station. named
-after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".}
+\item{nearby_cp}{A list of vectors:
+- Each vector contains change-points for a nearby station (format: "YYYY-MM-DD").
+- Each vector named after the corresponding station.}
 
-\item{noise_model_fix}{A list of noise models, either fixed or to be identified. If
-fixed, each model should be  of the following four: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
-or 'White'. If not fixed, the noise model will be identified using the longest
-segment.}
+\item{noise_model_fix}{Can be:
+- A string specifying one noise model for all series.
+- A data frame (6 rows x n columns) specifying models for each series (row) and nearby station (column).
+- NULL to determine noise models using NoiseModel_Id.R.
+Valid models: 'AR(1)', 'MA(1)', 'ARMA(1,1)', 'White'.}
 
-\item{nearby_weight}{A vector of numeric weights for each nearby station, used in
-aggregating the final prediction. If not fixed, all nearby stations will be assigned
-equal weight. The length of the vector should be the same as the
-number of nearby stations.}
+\item{nearby_weight}{A numeric vector where:
+- Length equals the number of nearby stations \
+- Each element is the weight for a nearby station
+- If NULL, all stations are assigned equal weight}
 
-\item{limit_2side}{An integer specifying the number of points to be used in the
-significance testing before and after each changepoint. This can be used to speed up
-the testing process. Default is NULL, which means all points are used.}
+\item{limit_2side}{An integer that:
+  - Specifies the number of points used before and after each changepoint for testing
+  - If NULL (default), all points are used
+
+Please verify the format of input in the tests/testthat/test-attribution.R}
 }
 \value{
 A list with four components:
 
 \describe{
-  \item{noise_model}{A data frame of the identified noise models for each of the six
-difference series between the main station and each nearby station. Each element is
-a string indicating the noise model (e.g, 'AR(1)', 'MA(1)', etc)}
+  \item{noise_model}{
+A data frame (6 rows x n columns) where:
+ - Rows represent the six difference series
+ - Columns represent nearby stations
+ - Each cell contains a string indicating the noise model (e.g., 'AR(1)',
+MA(1)') of the according series }
   \item{test_results}{A list of data frames, where each data frame contains the test
 results for each changepoint and each nearby station. The columns are the names of the
 nearby stations, and the rows are the six difference series.}
@@ -65,23 +71,40 @@ a single case}
 }
 }
 \description{
-This function predicts the origin of each changepoint in the main station by testing
-the significance of jumps across six difference series for each main-nearby station
-pair. It then predicts the configuration using a predictive rule and aggregates the
-results for each changepoint from all nearby stations.
+This function predicts the origin of change-points in a station, which detected
+on the difference series GPS - reference (ERA). The ideas of this method is to use
+nearby station, which give GPS' and ERA' series. User need to compute the
+six difference series  (GPS-ERA, GPS-GPS', GPS-ERA', ERA-ERA', GPS'-ERA', GPS'-ERA)
+for each main-nearby station pair. This function tests the significance of changes
+in mean in each of the six difference series for each main-nearby station pair,
+predicts configurations from the test results, and aggregates them from all nearby stations
+for each change-points.
 }
 \details{
-The function has four main steps:
+The function operates in four main steps:
 
-1. Model identification: Identify the noise model for each of the six difference
-series between the main station and a nearby station.
+1. **Model Identification** (optional): Uses the `NoiseModel_Id.R` function to
+to identify the noise model for each difference series.
 
-2. Significance testing: Test the significance of jumps in each of the six difference
-series using the identified noise model.
+2. **Significance Test**: Uses the `Test_CP.R` function to test the significance
+of changes in mean in each difference series.
 
-3. Configuration prediction: Predict the configuration of the main station and the
-nearby station based on the test results.
+3. **Configuration Prediction**:
+   - Uses the `Prediction_CP.R` function to predict the configuration of each
+triplet (main, changepoint, nearby) based on their test result of the six difference series.
+   - Uses 24 pre-trained predictive models from `Predictiverule.RDS`.
 
-4. Aggregation: Aggregate the prediction results for each changepoint from all nearby
-stations.
+4. **Aggregation**: Aggregates the prediction results for each change-point
+from all nearby stations.
+
+Additionally, the function performs two preliminary checks:
+
+1. **Cluster Check**:
+   - Looks for clusters of change-points (within 80 days) in main and nearby stations.
+   - If a cluster exists, the function stops.
+
+2. **Coincident Check**:
+   - Identifies "coincident" change-points (within 10 days) between main and nearby stations.
+   - Coincident points in nearby stations are not used for selection of segment for significance test.
+   - Data between main change-points and coincident points is removed from four non-collocated series.
 }
