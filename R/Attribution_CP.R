@@ -13,57 +13,73 @@
 #' @details
 #' The function operates in four main steps:
 #'
-#' 1. **Model Identification** (optional): Uses the `NoiseModel_Id.R` function to
+#' \strong{1. Model Identification} (optional): Uses the `NoiseModel_Id.R` function to
 #' to identify the noise model for each difference series.
 #'
-#' 2. **Significance Test**: Uses the `Test_CP.R` function to test the significance
+#' \strong{2. Significance Test}: Uses the `Test_CP.R` function to test the significance
 #' of changes in mean in each difference series.
 #'
-#' 3. **Configuration Prediction**:
+#' \strong{3. Configuration Prediction}:
+#'
 #'    - Uses the `Prediction_CP.R` function to predict the configuration of each
 #' triplet (main, changepoint, nearby) based on their test result of the six difference series.
+#'
 #'    - Uses 24 pre-trained predictive models from `Predictiverule.RDS`.
 #'
-#' 4. **Aggregation**: Aggregates the prediction results for each change-point
+#' \strong{4. Aggregation}: Aggregates the prediction results for each change-point
 #' from all nearby stations.
 #'
 #' Additionally, the function performs two preliminary checks:
 #'
-#' 1. **Cluster Check**:
+#' \strong{a. Cluster Check}:
+#'
 #'    - Looks for clusters of change-points (within 80 days) in main and nearby stations.
+#'
 #'    - If a cluster exists, the function stops.
 #'
-#' 2. **Coincident Check**:
-#'    - Identifies "coincident" change-points (within 10 days) between main and nearby stations.
-#'    - Coincident points in nearby stations are not used for selection of segment for significance test.
-#'    - Data between main change-points and coincident points is removed from four non-collocated series.
+#' \strong{b. Coincident Check}:
+#' \itemize{
+#'   \item Identifies "coincident" change-points (within 10 days) between main and nearby stations.
+#'   \item Coincident points in nearby stations are not used for selection of segment for significance test.
+#'   \item Data between main change-points and coincident points is removed from four non-collocated series.
+#' }
 #'
-#' @param dataset A list where:
-#'   - Each element represents a main-nearby station pair, named after the nearby station.
-#'   - Each element is a data frame with 7 columns:
-#'     1. Date: In format "YYYY-MM-DD"
-#'     2-7. GE, GGp, GEp, EEp, GpEp, GpE: Numeric, representing six difference series.
-#'  The difference series are:
-#'  GPS-ERA, GPS-GPS', GPS-ERA', ERA-ERA', GPS'-ERA', GPS'-ERA, respectively.
+#' @param dataset A list of length n where n is the number of nearby station.
+#' Each element of the list is a data frame representing a main-nearby
+#' station pair and is named after the nearby station. The data frames have 7 columns.
+#' The first column is labeled "Date" and contains dates in "YYYY-MM-DD" format.
+#' The other 6 columns contain numeric values. These columns represent six difference
+#' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA.
 #'
-#' @param main_cp A vector of change-points in the main station (in Date format: "\%Y-\%m-\%d").
+#' @param main_cp A vector of day representing change-points in the main station
+#' in Date format: "\%Y-\%m-\%d".
 #'
-#' @param nearby_cp A list of vectors:
-#'   - Each vector contains change-points for a nearby station (format: "YYYY-MM-DD").
+#' @param nearby_cp A list of length n where n is the number of nearby station.
+#' Each element is a vector contains of day representing change-points for the
+#' corresponding nearby station in Date format: "\%Y-\%m-\%d".
+#'
 #'   - Each vector named after the corresponding station.
 #' @param noise_model_fix Can be:
+#'
 #'   - A string specifying one noise model for all series.
+#'
 #'   - A data frame (6 rows x n columns) specifying models for each series (row) and nearby station (column).
+#'
 #'   - NULL to determine noise models using NoiseModel_Id.R.
 #'   Valid models: 'AR(1)', 'MA(1)', 'ARMA(1,1)', 'White'.
 #'
 #' @param nearby_weight A numeric vector where:
+#'
 #'   - Length equals the number of nearby stations
+#'
 #'   - Each element is the weight for a nearby station
+#'
 #'   - If NULL, all stations are assigned equal weight
 #'
 #' @param limit_2side An integer that:
+#'
 #'   - Specifies the number of points used before and after each changepoint for testing
+#'
 #'   - If NULL (default), all points are used
 #'
 #' Please verify the format of input in the tests/testthat/test-attribution.R
@@ -73,10 +89,14 @@
 #' \describe{
 #'   \item{noise_model}{
 #'A data frame (6 rows x n columns) where:
-#'  - Rows represent the six difference series
-#'  - Columns represent nearby stations
-#'  - Each cell contains a string indicating the noise model (e.g., 'AR(1)',
+#'
+#'  * Rows represent the six difference series
+#'
+#'  * Columns represent nearby stations
+#'
+#'  * Each cell contains a string indicating the noise model (e.g., 'AR(1)',
 #' MA(1)') of the according series }
+#'
 #'   \item{test_results}{A list of data frames, where each data frame contains the test
 #' results for each changepoint and each nearby station. The columns are the names of the
 #' nearby stations, and the rows are the six difference series.}
