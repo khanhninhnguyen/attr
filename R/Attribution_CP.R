@@ -13,36 +13,31 @@
 #' @details
 #' The function operates in four main steps:
 #'
-#' \strong{1. Model Identification} (optional): Uses the `NoiseModel_Id.R` function to
+#' \strong{1. Model Identification} (optional): uses the `NoiseModel_Id.R` function to
 #' to identify the noise model for each difference series.
 #'
-#' \strong{2. Significance Test}: Uses the `Test_CP.R` function to test the significance
+#' \strong{2. Significance Test}: uses the `Test_CP.R` function to test the significance
 #' of changes in mean in each difference series.
 #'
-#' \strong{3. Configuration Prediction}:
+#' \strong{3. Configuration Prediction}: uses the `Prediction_CP.R` function to predict
+#' the configuration of each triplet (main, changepoint, nearby) based on their
+#' test result (t-value) of the six difference series.
 #'
-#'    - Uses the `Prediction_CP.R` function to predict the configuration of each
-#' triplet (main, changepoint, nearby) based on their test result of the six difference series.
-#'
-#'    - Uses 24 pre-trained predictive models from `Predictiverule.RDS`.
-#'
-#' \strong{4. Aggregation}: Aggregates the prediction results for each change-point
+#' \strong{4. Aggregation}: combines the prediction results for each change-point
 #' from all nearby stations.
 #'
 #' Additionally, the function performs two preliminary checks:
 #'
-#' \strong{a. Cluster Check}:
+#' \strong{a. Cluster Check}: uses the `check_cluster_CP.R` function to
+#' determine if any clusters of change-points exist across all stations. A
+#' cluster is defined as a group of change-points within 80 days. If a cluster
+#' is found, the `Attribution_CP.R` function stops.
 #'
-#'    - Looks for clusters of change-points (within 80 days) in main and nearby stations.
-#'
-#'    - If a cluster exists, the function stops.
-#'
-#' \strong{b. Coincident Check}:
-#' \itemize{
-#'   \item Identifies "coincident" change-points (within 10 days) between main and nearby stations.
-#'   \item Coincident points in nearby stations are not used for selection of segment for significance test.
-#'   \item Data between main change-points and coincident points is removed from four non-collocated series.
-#' }
+#' \strong{b. Coincident Check}: uses the `check_similar_CP.R` function to
+#' identify "similar" change-points in nearby stations that occur within 10 days
+#' of change-points in the main station. Data between main change-points and
+#' "similar" change-points is removed from the four non-collocated series for
+#' the significance test of the change in mean.
 #'
 #' @param dataset A list of length n where n is the number of nearby station.
 #' Each element of the list is a data frame representing a main-nearby
@@ -51,43 +46,45 @@
 #' The other 6 columns contain numeric values. These columns represent six difference
 #' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA.
 #'
-#' @param main_cp A vector of day representing change-points in the main station
-#' in Date format: "\%Y-\%m-\%d".
+#' @param main_cp A vector of dates in Date format: "\%Y-\%m-\%d" representing
+#' change-points in the main station.
+#'
+#' @param nearby_cp A list with n elements, where n is the number of nearby stations.
+#' Each element is named after the corresponding station and is a vector containing
+#' change-points for the corresponding nearby station in Date format: "\%Y-\%m-\%d".
 #'
 #' @param nearby_cp A list of length n where n is the number of nearby station.
-#' Each element is a vector contains of day representing change-points for the
-#' corresponding nearby station in Date format: "\%Y-\%m-\%d".
+#' Each element is named after the corresponding station and is a vector contains
+#' of day representing change-points for the corresponding nearby station in
+#' Date format: "\%Y-\%m-\%d".
 #'
-#'   - Each vector named after the corresponding station.
-#' @param noise_model_fix Can be:
+#' @param noise_model_fix  This parameter specifies the noise model for the series.
+#' It can be:
+#'   - A string indicating one noise model for all series.
 #'
-#'   - A string specifying one noise model for all series.
+#'   - A data frame with 6 rows and n columns, where each row represents a difference
+#'   series (e.g, GE, GGp, etc) and each column represents a nearby station,
+#'   specifying the noise model for each series.
 #'
-#'   - A data frame (6 rows x n columns) specifying models for each series (row) and nearby station (column).
+#'   - NULL, to determine noise models using the NoiseModel_Id.R function.
 #'
-#'   - NULL to determine noise models using NoiseModel_Id.R.
-#'   Valid models: 'AR(1)', 'MA(1)', 'ARMA(1,1)', 'White'.
+#' The noise model must be one of the following: 'AR(1)', 'MA(1)', 'ARMA(1,1)', or 'White'.
 #'
-#' @param nearby_weight A numeric vector where:
+#' @param nearby_weightA numeric vector of length n, where each element represents
+#' the weight for a nearby station. If NULL, all stations are assigned equal weight.
+
 #'
-#'   - Length equals the number of nearby stations
-#'
-#'   - Each element is the weight for a nearby station
-#'
-#'   - If NULL, all stations are assigned equal weight
-#'
-#' @param limit_2side An integer that:
-#'
-#'   - Specifies the number of points used before and after each changepoint for testing
-#'
-#'   - If NULL (default), all points are used
+#' @param limit_2side An integer specifying the number of points in the segment
+#' before and after the changepoint used for testing. If NULL (default), the
+#' segments before and after the tested changepoint are limited by the nearest
+#' changepoints.
 #'
 #' Please verify the format of input in the tests/testthat/test-attribution.R
-#' CHECK HOW TO MAKE IT LINE BY LINE
+#'
 #' @return A list with four components:
 #'
 #' \describe{
-#'   \item{noise_model}{
+#'   \item{Noise_model}{
 #'A data frame (6 rows x n columns) where:
 #'
 #'  * Rows represent the six difference series
@@ -97,19 +94,29 @@
 #'  * Each cell contains a string indicating the noise model (e.g., 'AR(1)',
 #' MA(1)') of the according series }
 #'
-#'   \item{test_results}{A list of data frames, where each data frame contains the test
-#' results for each changepoint and each nearby station. The columns are the names of the
-#' nearby stations, and the rows are the six difference series.}
-#'   \item{prediction_results}{A list of data frames containing the predicted
-#' configuration for each changepoint and nearby station. Each data frame is named
-#' after the corresponding nearby station and contains three columns: the
-#' candidate configuration with the highest frequency after running 24 models,
-#' the probability of the candidate, and the final configuration. Each row
-#' corresponds to a nearby station.}
-#'   \item{aggregated_results}{ A data frame of the aggregated prediction results
-#' for each changepoint, based on the weights specified in nearby_weight. This data
-#' frame is presented in a similar format to the prediction_results data frame for
-#' a single case}
+#'   \item{Test_results}{
+#'     A list of m data frames, where m is the number of change-points. Each
+#'     data frame contains t-values for changes in the mean of six difference series,
+#'     assessed for all main-nearby station pairs. The data frames are named after
+#'     each changepoint and structured with 6 rows for the six difference series
+#'     and n columns corresponding to the nearby stations.
+#'   }
+#'
+#'   \item{Prediction_results}{
+#'     A list of m data frames, where m is the number of change-points. Each data
+#'     frame is named after the corresponding changepoint and contains the predicted
+#'     configurations for each changepoint. The data frames include three columns:
+#'     "candidate_config" is the candidate configuration with the highest frequency
+#'     from running 24 models, "proba" is the probability of the candidate, and
+#'     "final_config" is the final configuration. Each row corresponds to a nearby station.
+#'   }
+#'
+#'   \item{Aggregated_results}{
+#'     A list of m data frames, where m is the number of change-points. Each data
+#'     frame contains the aggregated prediction results for each change-point, based
+#'     on the weights specified in nearby_weight. These data frames are formatted
+#'     similarly to the prediction_results data frames for individual cases.
+#'   }
 #' }
 #'
 #'
