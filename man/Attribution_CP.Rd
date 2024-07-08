@@ -17,10 +17,10 @@ Attribution_CP(
 \item{dataset}{A list of length n where n is the number of nearby stations.
 Each element of the list is a data frame representing a main-nearby station
 pair and is named after the nearby station. The data frame contains seven
-columns: the first labeled "Date" with dates in "YYYY-MM-DD" format and the
+columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format and the
 remaining six columns containing numeric values representing six difference
 series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
-with names GE, GGp, GEp, EEp, GpEp, and GpE, respectively.}
+with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.}
 
 \item{main_cp}{A vector of dates in Date format: "\%Y-\%m-\%d" representing
 change-points in the main station.}
@@ -36,21 +36,21 @@ It can be:
   - A string indicating one noise model for all series.
 
   - A data frame with 6 rows and n columns, where each row represents a difference
-  series (e.g, GE, GGp, etc) and each column represents a nearby station,
+  series (e.g, \code{GE, GGp}, etc) and each column represents a nearby station,
   specifying the noise model for each series.
 
-  - NULL, to determine noise models using the NoiseModel_Id.R function.
+  - NULL, to determine noise models using the \code{\link{NoiseModel_Id.R}} function.
 
-The noise model must be one of the following: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
-or 'White'.}
+The noise model must be one of the following: \code{'AR(1)', 'MA(1)', 'ARMA(1,1)',
+or 'White'}.}
 
 \item{nearby_weight}{A numeric vector of length n, each element representing
 the weight assigned to a nearby station for aggregating predicted configurations.
 If NULL, equal weight is assigned to all stations.}
 
 \item{limit_2side}{An integer specifying the number of points in the segments
-before and after the changepoint used for testing. If NULL (default), the segments
-before and after each tested changepoint are defined by the nearest changepoints.}
+before and after the change-point used for testing. If NULL (default), the segments
+before and after each tested change-point are defined by the nearest change-points.}
 }
 \value{
 A list with four components:
@@ -114,7 +114,7 @@ to identify the noise model for each difference series.
 \strong{2. Significance Test}: employs the \code{\link{Test_CP.R}} function to test the
 significance of the change in mean in each difference series.
 
-\strong{3. Configuration Prediction}: applies the `Prediction_CP.R` function
+\strong{3. Configuration Prediction}: applies the \code{\link{Prediction_CP.R}} function
 to predict the configuration of each triplet (main, changepoint, nearby) based
 on their test result (t-value) of the six difference series.
 
@@ -123,12 +123,12 @@ from all nearby stations.
 
 Additionally, the function performs two preliminary checks:
 
-\strong{a. Cluster Check}: uses the `check_cluster_CP.R` function to
+\strong{a. Cluster Check}: uses the \code{\link{check_cluster_CP.R}} function to
 determine if any clusters of change-points exist across all stations. A
 cluster is defined as a group of change-points within 80 days. If a cluster
-is found, the `Attribution_CP.R` function stops.
+is found, the \code{\link{Attribution_CP.R}} function stops.
 
-\strong{b. Coincident Check}: employs the `check_similar_CP.R` function to
+\strong{b. Coincident Check}: employs the \code{\link{check_similar_CP.R}} function to
 identify "similar" change-points in nearby stations that occur within 10 days
 of change-points in the main station. Data between change-points in the main
 station and "similar" change-points in the nearby station is removed from the

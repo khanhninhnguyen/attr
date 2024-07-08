@@ -7,20 +7,22 @@
 check_cluster_CP(Series_df, Name_series, CP)
 }
 \arguments{
-\item{Series_df}{A data frame contains at least 2 columns named Date and
-Name_series. The Date column must be in Date type on this format: "\%Y-\%m-\%d"),
-and the Name_series column is numeric (can be NA).}
+\item{Series_df}{A data frame containing data for a main-nearby pair. It contains
+at least two columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format
+and the second being one of the six difference series, including: GPS - ERA, GPS - GPS',
+GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp,
+GEp, EEp, GpEp,} and \code{GpE}, respectively.}
 
-\item{Name_series}{The name of the column in "data" that we want to test,
-as a character string.}
+\item{Name_series}{The name of the column in \code{Series_df} to check.}
 
-\item{CP}{Vector of breakpoints in the test series in Date type
-on this format: "\%Y-\%m-\%d".}
+\item{CP}{A vector of dates in Date format: "%Y-%m-%d" representing
+change-points in the series to check.}
 }
 \value{
-Vector of break points in a cluster in Date type
+Vector of break points in a cluster in Date format: "\%Y-\%m-\%d"
 }
 \description{
-Check if there is a cluster in segmentation result
+This function determine if any clusters of change-points exist in a station
+based on segmentation results. A cluster is defined as a group of change-points
+within 80 days.
 }
-\keyword{internal}

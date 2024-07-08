@@ -7,24 +7,36 @@
 NoiseModel_Id(dataset, main_cp, nearby_cp)
 }
 \arguments{
-\item{dataset}{A list of data frames, where each data frame contains 6 time series
-differences (so 7 columns in total) between a main station and a nearby station. The
-first column should be the date, and the next six columns must be in this order:
-G-E, G-G', G-E', E-E', G'-E', G'-E. The name of each data frame must be the name
-of the nearby station.}
+\item{dataset}{A list of length n where n is the number of nearby stations.
+Each element of the list is a data frame representing a main-nearby station
+pair and is named after the nearby station. The data frame contains seven
+columns: the first labeled "\code{Date}" with dates in "YYYY-MM-DD" format and the
+remaining six columns containing numeric values representing six difference
+series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
+with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.}
 
-\item{main_cp}{A vector of main station breakpoints in Date type on this format:
-"\%Y-\%m-\%d".}
+\item{main_cp}{A vector of dates in Date format: "\%Y-\%m-\%d" representing
+change-points in the main station.}
 
-\item{nearby_cp}{A list of break point vectors for each nearby station, named
-after the respective nearby station, in Date type on this format: "\%Y-\%m-\%d".}
+\item{nearby_cp}{A list with n elements, where n is the number of nearby stations.
+Each element is named after the corresponding nearby station and is a vector containing
+change-points for the corresponding nearby station in Date format: "\%Y-\%m-\%d".}
 }
 \value{
-A noise model data frame with dimensions (6 * n), where n is the
-number of nearby stations. The 6 rows correspond to the 6 difference series.
-The noise model for each series is given as a character string, such as "AR(1)",
-"MA(1)", "ARMA(1,1)", or "White"
+A data frame (6 rows x n columns) where:
+
+ * rows represent the six difference series,
+
+ * columns represent nearby stations,
+
+ * each cell contains a string indicating the noise model (e.g., \code{AR(1)',
+MA(1)'}) of the according series.
 }
 \description{
-Identify Time Series Noise Model
+This function fits the noise model for six difference series in \code{dataset}.
+In each difference series, the longest homogeneous segment is used to fit a model
+that includes the mean, periodic bias, and heteroskedastic noise. The variance
+is estimated using a moving window technique. Fitting is performed via weighted
+least squares. Normalized residuals are utilized to fit an ARMA model with a
+maximum order of 1. Only significant parameters are retained and reported in the output.
 }

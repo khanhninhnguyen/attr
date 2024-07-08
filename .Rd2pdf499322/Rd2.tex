@@ -1,0 +1,41 @@
+\documentclass[letterpaper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8]{inputenc} % @SET ENCODING@
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `attr'}}
+\par\bigskip{\large \today}
+\end{center}
+\inputencoding{utf8}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdftitle = {attr: Attribute Changepoints Detected by Relative Homogenization}}}{}\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Title]\AsIs{Attribute Changepoints Detected by Relative Homogenization}
+\item[Version]\AsIs{0.1.0}
+\item[Date]\AsIs{2024-03-19}
+\item[Author]\AsIs{Ninh Nguyen, Emilie Lebarbier}
+\item[Maintainer]\AsIs{Ninh Nguyen }\email{knguyen@ipgp.fr}\AsIs{, Emilie Lebarbier }\email{lebarbie@parisnanterre.fr}\AsIs{}
+\item[Description]\AsIs{Predict the origin of changepoints in relative segmentation using the Generalized Least Square and Random Forest.}
+\item[Depends]\AsIs{R (>= 3.5.0)}
+\item[License]\AsIs{GPL-3}
+\item[Encoding]\AsIs{UTF-8}
+\item[LazyData]\AsIs{true}
+\item[RoxygenNote]\AsIs{7.2.3}
+\item[Imports]\AsIs{usethis,
+dplyr,
+tidyr,
+forecast,
+lmtest,
+robustbase,
+stringr,
+gt,
+randomForest,
+nlme}
+\item[Suggests]\AsIs{testthat (>= 3.0.0)}
+\item[Config/testthat/edition]\AsIs{3}
+\end{description}
+\Rdcontents{\R{} topics documented:}

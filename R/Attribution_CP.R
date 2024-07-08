@@ -46,10 +46,10 @@
 #' @param dataset A list of length n where n is the number of nearby stations.
 #' Each element of the list is a data frame representing a main-nearby station
 #' pair and is named after the nearby station. The data frame contains seven
-#' columns: the first labeled "Date" with dates in "YYYY-MM-DD" format and the
+#' columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format and the
 #' remaining six columns containing numeric values representing six difference
 #' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
-#' with names GE, GGp, GEp, EEp, GpEp, and GpE, respectively.
+#' with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.
 #'
 #' @param main_cp A vector of dates in Date format: "\%Y-\%m-\%d" representing
 #' change-points in the main station.
@@ -69,21 +69,21 @@
 #'   - A string indicating one noise model for all series.
 #'
 #'   - A data frame with 6 rows and n columns, where each row represents a difference
-#'   series (e.g, GE, GGp, etc) and each column represents a nearby station,
+#'   series (e.g, \code{GE, GGp}, etc) and each column represents a nearby station,
 #'   specifying the noise model for each series.
 #'
-#'   - NULL, to determine noise models using the NoiseModel_Id.R function.
+#'   - NULL, to determine noise models using the \code{\link{NoiseModel_Id.R}} function.
 #'
-#' The noise model must be one of the following: 'AR(1)', 'MA(1)', 'ARMA(1,1)',
-#' or 'White'.
+#' The noise model must be one of the following: \code{'AR(1)', 'MA(1)', 'ARMA(1,1)',
+#' or 'White'}.
 #'
 #' @param nearby_weight A numeric vector of length n, each element representing
 #' the weight assigned to a nearby station for aggregating predicted configurations.
 #' If NULL, equal weight is assigned to all stations.
 #'
 #' @param limit_2side An integer specifying the number of points in the segments
-#' before and after the changepoint used for testing. If NULL (default), the segments
-#' before and after each tested changepoint are defined by the nearest changepoints.
+#' before and after the change-point used for testing. If NULL (default), the segments
+#' before and after each tested change-point are defined by the nearest change-points.
 #'
 #' @return A list with four components:
 #'

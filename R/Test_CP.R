@@ -5,10 +5,10 @@
 #' Generalized Least Squares.
 #'
 #' @param Series_df A data frame containing data for a main-nearby pair. It contains
-#' at least two columns: the first labeled "Date" with dates in "YYYY-MM-DD" format
+#' at least two columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format
 #' and the second being one of the six difference series, including: GPS - ERA, GPS - GPS',
-#' GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names GE, GGp, GEp, EEp,
-#' GpEp, and GpE, respectively.
+#' GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp, GEp, EEp,
+#' GpEp,} and \code{GpE}, respectively.
 #'
 #' @param Name_series A string representing the name of the column in \code{Series_df} to check.
 #'

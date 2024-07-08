@@ -3,9 +3,9 @@ Type: Package
 Title: Attribute Changepoints Detected by Relative Homogenization
 Version: 0.1.0
 Date: 2024-03-19
-Author: Ninh Nguyen
-Maintainer: Ninh Nguyen <knguyen@ipgp.fr>
-Description: Ifentify the origin of changepoints using the Generalized Least Square and Random Forest.
+Author: Ninh Nguyen, Emilie Lebarbier
+Maintainer: Ninh Nguyen <knguyen@ipgp.fr>, Emilie Lebarbier <lebarbie@parisnanterre.fr>
+Description: Predict the origin of changepoints in relative segmentation using the Generalized Least Square and Random Forest.
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8

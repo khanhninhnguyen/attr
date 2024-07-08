@@ -23,9 +23,8 @@
 #' @importFrom dplyr mutate
 #'
 #' @importFrom stats predict
-
+#'
 #' @export
-#' @keywords internal
 #'
 Prediction_CP <- function(test_result){
 

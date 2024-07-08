@@ -9,10 +9,10 @@
 #' significance test of the change in mean.
 #'
 #' @param Series_df A data frame containing data for a main-nearby pair. It contains seven
-#' columns: the first labeled "Date" with dates in "YYYY-MM-DD" format and the
+#' columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format and the
 #' remaining six columns containing numeric values representing six different
 #' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
-#' with names GE, GGp, GEp, EEp, GpEp, and GpE, respectively.
+#' with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.
 #'
 #' @param main_cp A vector of dates in Date format: "%Y-%m-%d" representing
 #' change-points in the main station.
@@ -27,10 +27,11 @@
 #' change-points in the nearby station to the change-points in the main station.
 #'
 #' @importFrom tidyr drop_na
+#'
 #' @importFrom dplyr arrange
-
+#'
 #' @export
-#' @keywords internal
+#'
 
 check_similar_CP <- function(Series_df, main_cp, nearby_cp_one, threshold){
 

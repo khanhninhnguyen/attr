@@ -2,30 +2,34 @@
 % Please edit documentation in R/check_similar_CP.R
 \name{check_similar_CP}
 \alias{check_similar_CP}
-\title{To check is there similar changes in the nearby stations}
+\title{To check for similar changes in nearby stations}
 \usage{
-check_similar_CP(Six_Series, main_cp, nearby_cp_one, threshold)
+check_similar_CP(Series_df, main_cp, nearby_cp_one, threshold)
 }
 \arguments{
-\item{Six_Series}{A data frame contains 6 time series differences (so 7 columns
-in total) between a main station and a nearby station. The first column should
-be the date (in Date type on this format: "\%Y-\%m-\%d"), and the next six columns
-must be in this order:
-G-E, G-G', G-E', E-E', G'-E', G'-E.}
+\item{Series_df}{A data frame containing data for a main-nearby pair. It contains seven
+columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format and the
+remaining six columns containing numeric values representing six different
+series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
+with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.}
 
-\item{main_cp}{A vector of main station breakpoints in Date type on this format:
-"\%Y-\%m-\%d".}
+\item{main_cp}{A vector of dates in Date format: "%Y-%m-%d" representing
+change-points in the main station.}
 
-\item{nearby_cp_one}{A vector of main station breakpoints in Date type on this format:
-"\%Y-\%m-\%d".}
+\item{nearby_cp_one}{A vector of dates in Date format: "%Y-%m-%d" representing
+change-points in the nearby station.}
 
-\item{threshold}{Integer number is the threshold to define the number of
-point between 2 breakpoints in a cluster}
+\item{threshold}{An integer specifying the number of points between two change-points,
+which defines if it is a "similar" change-point. Default is 10.}
 }
 \value{
-list of main changes and their similar in the nearby in Date type
+A vector of dates in Date format: "%Y-%m-%d" representing "similar"
+change-points in the nearby station to the change-points in the main station.
 }
 \description{
-To check is there similar changes in the nearby stations
+This function identifies "similar" change-points in a nearby station that occur
+within a specified number of days of the change-points in the main station.
+Data between change-points in the main station and "similar" change-points
+in the nearby station is removed from the four non-collocated series for the
+significance test of the change in mean.
 }
-\keyword{internal}
