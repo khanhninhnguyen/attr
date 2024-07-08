@@ -1,9 +1,16 @@
 #' Apply the predictive rule to the test result
 #'
-#' @param test_result A data frame contains t-values for changes in the mean of six
-#' difference series, assessed for all main-nearby station pairs. The data frames
-#' are structured with 6 rows for the six difference
-#' series and n columns corresponding to the nearby stations.
+#' @description
+#' This function applies the trained predictive rules using Random Forest
+#' on the test results, which include 6 t-values for each change-point and 1 nearby
+#' station.  The 24 predictive rules stored in the "extdata/PredictiveRule.RDS"
+#' file are trained with the IWV converted from the Nevada Geodetic Laboratory solution
+#' and ERA5 data.
+#'
+#' @param test_result A data frame contains t-values for changes in the mean of
+#' six difference series, assessed for all main-nearby station pairs. The data frames
+#' are structured with 6 rows for the six difference series and n columns corresponding
+#' to the nearby stations.
 #'
 #' @return A data frame contains the predicted configurations for each change-point.
 #' The data frames include three columns: \code{candidate_config} is the candidate

@@ -1,39 +1,45 @@
 #' Test Jump Significance in Difference Series
 #'
 #' @description
-#' Tests the significance of jumps at breakpoints in six difference series
-#' between a main station and nearby stations.
+#' Tests the significance of the jump at breakpoints in a series using Feasible
+#' Generalized Least Squares.
 #'
-#' @param Series_df A data frame contains at least 2 columns named Date and
-#' Name_series. The Date column must be in Date type on this format: "\%Y-\%m-\%d"),
-#' and the Name_series column is numeric (can be NA).
+#' @param Series_df A data frame containing data for a main-nearby pair. It contains
+#' at least two columns: the first labeled "Date" with dates in "YYYY-MM-DD" format
+#' and the second being one of the six difference series, including: GPS - ERA, GPS - GPS',
+#' GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names GE, GGp, GEp, EEp,
+#' GpEp, and GpE, respectively.
 #'
-#' @param Name_series The name of the column in "data" that we want to test,
-#' as a character string.
+#' @param Name_series A string representing the name of the column in \code{Series_df} to check.
 #'
-#' @param CP A change point in Date type on this format: "\%Y-\%m-\%d"
+#' @param CP A date in Date format: "%Y-%m-%d" representing a change-point
+#' in the main station.
 #'
-#' @param limit An integer specifying the number of points to be used in the
-#' significance testing before and after each breakpoint. This can be used to speed up
-#' the testing process. Default is NULL, which means all points are used.
+#' @param limit An integer specifying the number of points in the segments
+#' before and after the change-point used for testing. If NULL (default), the segments
+#' before and after each tested change-point are defined by the nearest change-points.
 #'
 #' @param tol A numeric value indicating the tolerance of the parameter to stop
-#' the iterative FGLS
+#' the iterative FGLS.
 #'
-#' @param noise_model A vector of 3 number indicating the ARMA(p,0,q) model, where
-#' p and q can be 0 or 1
+#' @param noise_model A vector of 3 integer values indicating the order of the ARMA(p,0,q) model, where
+#' p and q can be 0 or 1.
 #'
-#' @param length_win  An integer value specifying the length of the window used
-#' to compute the sliding standard deviation.
+#' @param length_win An integer value specifying the length of the window used
+#' to compute the moving variance.
 #'
-#' @param name_case  A logical value indicating whether to save the results or not.
-#' By default, it does not save the results.
+#' @param name_case A string value indicating the name of the file to save the detailed results.
+#' By default, the detailed results are not saved.
 #'
-#' @return A list of 2 components:
-#' 1. A vector of dates used in the test.
-#' 2. A data frame with dimensions (n x 4), where n is the number of variables
-#' in the model, and the 4 columns correspond to the estimates, their standard errors,
-#' t-values, and p-values.
+#' @return A list of 2 elements:
+#'
+#' 1. A vector of dates that have available data used in the test.
+#'
+#' 2. A summary data frame of the test results with dimensions (l x 4), where l
+#' is the number of variables in the model, and the 4 columns correspond to the
+#' estimates, their standard errors, t-values, and p-values. By default, 10 variables
+#' are included in the output, such as the mean, periodic bias (modeled by 4 coupled
+#' sine and cosine Fourier series), and the offset.
 #'
 #' @importFrom dplyr filter slice_tail slice_head arrange all_of
 #'

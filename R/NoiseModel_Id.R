@@ -2,7 +2,8 @@
 #'
 #' @description
 #'
-#' This function fits the longest homogeneous segment of a time series using a model
+#' This function fits the noise model for six difference series in \code{dataset}.
+#' In each difference series, the longest homogeneous segment is used to fit a model
 #' that includes the mean, periodic bias, and heteroskedastic noise. The variance
 #' is estimated using a moving window technique. Fitting is performed via weighted
 #' least squares. Normalized residuals are utilized to fit an ARMA model with a
