@@ -1,21 +1,30 @@
-#' To check is there similar changes in the nearby stations
+#' To check for similar changes in nearby stations
 #'
-#' @param Six_Series A data frame contains 6 time series differences (so 7 columns
-#'in total) between a main station and a nearby station. The first column should
-#' be the date (in Date type on this format: "\%Y-\%m-\%d"), and the next six columns
-#' must be in this order:
-#' G-E, G-G', G-E', E-E', G'-E', G'-E.
+#' @description
 #'
-#' @param main_cp A vector of main station breakpoints in Date type on this format:
-#' "\%Y-\%m-\%d".
+#' This function identifies "similar" change-points in a nearby station that occur
+#' within a specified number of days of the change-points in the main station.
+#' Data between change-points in the main station and "similar" change-points
+#' in the nearby station is removed from the four non-collocated series for the
+#' significance test of the change in mean.
 #'
-#' @param nearby_cp_one A vector of main station breakpoints in Date type on this format:
-#' "\%Y-\%m-\%d".
+#' @param Series_df A data frame containing data for a main-nearby pair. It contains seven
+#' columns: the first labeled "Date" with dates in "YYYY-MM-DD" format and the
+#' remaining six columns containing numeric values representing six different
+#' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
+#' with names GE, GGp, GEp, EEp, GpEp, and GpE, respectively.
 #'
-#' @param threshold Integer number is the threshold to define the number of
-#' point between 2 breakpoints in a cluster
+#' @param main_cp A vector of dates in Date format: "%Y-%m-%d" representing
+#' change-points in the main station.
 #'
-#' @return list of main changes and their similar in the nearby in Date type
+#' @param nearby_cp_one A vector of dates in Date format: "%Y-%m-%d" representing
+#' change-points in the nearby station.
+#'
+#' @param threshold An integer specifying the number of points between two change-points,
+#' which defines if it is a "similar" change-point. Default is 10.
+#'
+#' @return A vector of dates in Date format: "%Y-%m-%d" representing "similar"
+#' change-points in the nearby station to the change-points in the main station.
 #'
 #' @importFrom tidyr drop_na
 #' @importFrom dplyr arrange
@@ -23,13 +32,13 @@
 #' @export
 #' @keywords internal
 
-check_similar_CP <- function(Six_Series, main_cp, nearby_cp_one, threshold){
+check_similar_CP <- function(Series_df, main_cp, nearby_cp_one, threshold){
 
   Date <- GE <- NULL
 
   sim_changes <- as.Date(character(0))
 
-  main_df <- Six_Series %>%
+  main_df <- Series_df %>%
     select(Date, GE) %>%
     drop_na()
 

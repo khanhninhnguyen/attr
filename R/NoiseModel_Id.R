@@ -85,7 +85,7 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
 
     Date <- Freq <- NULL
 
-    stopifnot("Six_Series must be a dataframe" = is.data.frame(Series_df))
+    stopifnot("Series_df must be a dataframe" = is.data.frame(Series_df))
 
     estim <- data.frame(
       order = rep(NA, 2),

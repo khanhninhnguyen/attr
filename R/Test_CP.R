@@ -48,7 +48,7 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL,
 
   Date <- .data <- wts <- NULL
 
-  stopifnot("Six_Series must be a dataframe" = is.data.frame(Series_df))
+  stopifnot("Series_df must be a dataframe" = is.data.frame(Series_df))
 
   #####
   # count time

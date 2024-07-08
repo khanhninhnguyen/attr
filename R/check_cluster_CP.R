@@ -1,5 +1,10 @@
 #' Check if there is a cluster in segmentation result
 #'
+#' @description
+#' This function determine if any clusters of change-points exist in a station
+#' based on segmentation results.
+#' A cluster is defined as a group of change-points within 80 days.
+#'
 #' @param Series_df A data frame contains at least 2 columns named Date and
 #' Name_series. The Date column must be in Date type on this format: "\%Y-\%m-\%d"),
 #' and the Name_series column is numeric (can be NA).

@@ -51,7 +51,7 @@
 #' series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
 #' with names GE, GGp, GEp, EEp, GpEp, and GpE, respectively.
 #'
-#' @param main_cp  A vector of dates in Date format: "\%Y-\%m-\%d" representing
+#' @param main_cp A vector of dates in Date format: "\%Y-\%m-\%d" representing
 #' change-points in the main station.
 #'
 #' @param nearby_cp A list with n elements, where n is the number of nearby stations.
@@ -238,7 +238,7 @@ Attribution_CP <- function(dataset,
   # remove the similar change points in the nearby for the test
 
   similar_cp <- lapply(nearby_name, function(x) {
-    check_similar_CP(Six_Series = dataset[[x]],
+    check_similar_CP(Series_df = dataset[[x]],
                      main_cp = main_cp,
                      nearby_cp_one = nearby_cp[[x]],
                      threshold = 10)

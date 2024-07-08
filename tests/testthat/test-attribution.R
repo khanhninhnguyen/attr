@@ -16,7 +16,7 @@ dataset <- lapply(dataset, function(x) {
 
 # add change-points to test
 
-main_cp = as.Date( c("2016-04-04"),
+main_cp = as.Date( c("2016-04-04", "2010-02-24"),
                       format = "%Y-%m-%d")
 nearby_cp = list(
   bces = as.Date( c("2010-02-25",
@@ -55,8 +55,8 @@ main_cp0b = as.Date( c("2016-04-04","2016-03-04", "2017-04-04"),
 ### run test
 test_that("Check cluster", {
   expect_identical(sum(check_cluster_CP(Series_df = dataset[[1]],
-                                    Name_series = "GE",
-                                    CP = main_cp0a)$cluster), 0)
+                                        Name_series = "GE",
+                                        CP = main_cp0a)$cluster), 0)
 
   expect_identical(sum(check_cluster_CP(Series_df = dataset[[1]],
                                            Name_series = "GE",
@@ -67,7 +67,7 @@ test_that("Check cluster", {
 ## station
 
 nearby_cp0a = list(
-  bcns = as.Date( c("2010-02-24",
+  bcns = as.Date( c("2010-02-25",
                     "2011-12-17",
                     "2012-08-18",
                     "2017-06-29"),
@@ -75,7 +75,7 @@ nearby_cp0a = list(
   )
 
 nearby_cp0b = list(
-  bcns = as.Date( c("2010-02-24",
+  bcns = as.Date( c("2010-02-25",
                     "2011-12-17",
                     "2012-08-18",
                     "2016-04-10"),
