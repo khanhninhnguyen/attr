@@ -257,7 +257,6 @@ construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
 #-----------------------------------------------------------------------------
 # Convert from text to order of noise model
 #-----------------------------------------------------------------------------
-
 convert_model_order <- function(model_name) {
   if(model_name == "AR(1)") {
     y = c(1,0,0)
