@@ -83,8 +83,9 @@ Prediction_CP <- function(test_result){
   }
 
   Res = data.frame(max_freq_config = apply(candidate_config, 1, most_frequent_with_ties),
-                   freq = apply(candidate_config, 1, max_freq),
-                   final_config = sapply(max_freq_config, select_final_c))
+                   freq = apply(candidate_config, 1, max_freq)) %>%
+    dplyr:: mutate(final_config = sapply(max_freq_config, select_final_c))
+
 
   return(Res)
 

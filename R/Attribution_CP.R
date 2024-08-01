@@ -372,7 +372,7 @@ Attribution_CP <- function(dataset,
     new_df = na.omit(as.data.frame(t(t_val_all[[x]])))
 
     if (nrow(new_df) >0) {
-      prediction = Prediction_CP(new_df)[,c(25:27)]
+      prediction = Prediction_CP(new_df)
       rownames(prediction) <- rownames(new_df)
     } else{
       prediction = NA
@@ -392,7 +392,7 @@ Attribution_CP <- function(dataset,
         y = as.numeric(x$final_config)
         z = data.frame(max_freq_config = most_frequent_with_ties(y),
                        freq = max_freq(y)) %>%
-          mutate(final_config = select_final_c(max_freq_config))
+          dplyr:: mutate(final_config = select_final_c(max_freq_config))
 
       }
     })
