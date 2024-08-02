@@ -1,0 +1,96 @@
+---
+title: "README.md"
+author: "Ninh"
+date: "02/08/2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# attr
+
+This function attributes change-points detected in the difference series to one or both contributing series. Assuming the primary series is GPS and the secondary is ERA, change-points are identified in the GPS - ERA series. 
+The function determines whether these change-points are due to GPS, ERA, or both.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [License](#license)
+
+## Installation
+
+You can install the development version of `attr` from GitHub with:
+
+```{Installation}
+
+# Install devtools if you haven't already
+# install.packages("devtools")
+
+# Install the package from GitHub
+devtools::install_github("khanhninhnguyen/attr")
+```
+
+## Usage 
+
+The main function of this package is Attribution_CP. The method utilizes data from a nearby station providing GPS' and ERA' series. Users must compute six difference series (GPS-ERA, GPS-GPS', GPS-ERA', ERA-ERA', GPS'-ERA',
+GPS'-ERA) for each main-nearby station pair to serve as input in `dataset` variables. Example of the `dataset` is given in "attr/inst/extdata/dataset.RData" shown in the following: 
+
+```{Input, echo=FALSE}
+dataset <- get(load(file = system.file("extdata", "dataset.RDS",
+                                       package = "attr")))
+str(dataset) 
+
+convert_dates <- function(dates_list) {
+  lapply(dates_list, function(dates) as.Date(dates, format = "%Y-%m-%d"))
+}
+```
+
+For instance, we need to attribute the changepoints in the main station :
+```{Input, echo=FALSE}
+main_cp <- as.Date("2016-04-04", format = "%Y-%m-%d")
+```
+
+given in the nearby stations, there are some changepoints too: 
+
+```{Input, echo=FALSE}
+nearby_cp <- convert_dates(list(
+  bces = c("2010-02-25", "2012-08-13", "2017-06-19"),
+  bcns = c("2010-02-24", "2011-12-17", "2012-08-18", "2017-06-29"),
+  pgc5 = c("2009-07-24", "2011-12-17", "2017-11-20"),
+  ptaa = c(),
+  p435 = c("2011-10-12")
+))
+```
+
+Attribution method includes 4 main steps, which have been implemented in four functions in this package, which can run independently: 
+
+### Model identification
+
+```{Model identification, echo=FALSE}
+NoiseModel_Id(dataset = dataset,
+              main_cp = main_cp,
+              nearby_cp = nearby_cp)
+```
+
+### Test of significance of change-point in a time series
+
+```{Significance test, echo=FALSE}
+TestRes = Test_CP(dataset$bces, Name_series = "GE", CP = main_cp[1],
+                 noise_model = c("ARMA(1,1)"), limit = 100)
+str(TestRes)
+```
+
+### Configuration Prediction
+
+```{Prediction, echo=FALSE}
+# arbitrary example: assume that the t values of 6 tests are : 2,2,2,1,1,1
+ArbPred = Prediction_CP(data.frame(GE = 2, GGp = 2, GEp = 2, EEp = 1, GpEp = 1, GpE = 1))
+ArbPred
+
+```
+
+
