@@ -1,3 +1,10 @@
+---
+title: "README.md"
+author: "Ninh"
+date: "02/08/2024"
+output: html_document
+---
+
 # attr
 
 This function attributes change-points detected in the difference series to one or both contributing series. Assuming the primary series is GPS and the secondary is ERA, change-points are identified in the GPS - ERA series. 
