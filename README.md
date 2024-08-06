@@ -1,11 +1,17 @@
 ---
-title: "README.md"
-author: "Ninh"
-date: "02/08/2024"
-output: html_document
+output: github_document
 ---
 
-# attr
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+options(tibble.print_min = 5, tibble.print_max = 5)
+```
 
 This function attributes change-points detected in the difference series to one or both contributing series. Assuming the primary series is GPS and the secondary is ERA, change-points are identified in the GPS - ERA series. 
 The function determines whether these change-points are due to GPS, ERA, or both.
