@@ -6,12 +6,12 @@
 #' separated at least by 80 days
 #'
 #' @param Series_df a data frame containing data for a main-nearby pair.
-#' It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (%Y-%m-%d)
+#' It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d)
 #' and the second contains one of the six difference series, including GPS - ERA, GPS - GPS',
 #' GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp,
 #' GEp, EEp, GpEp,} and \code{GpE}, respectively
 #' @param Name_series the name of the column in \code{Series_df} to check
-#' @param CP a vector of dates in Date format (%Y-%m-%d) given the change-points in the series to check
+#' @param CP a vector of dates in Date format (\%Y-\%m-\%d) given the change-points in the series to check
 #'
 #' @return a vector of change-points which belongs to a cluster in Date format
 #'

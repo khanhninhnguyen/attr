@@ -5,12 +5,12 @@
 #' Generalized Least Squares (FGLS)
 #'
 #' @param Series_df a data frame containing data for a main-nearby pair.
-#' It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (%Y-%m-%d)
+#' It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d)
 #' and the second contains one of the six difference series, including GPS - ERA, GPS - GPS',
 #' GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp,
 #' GEp, EEp, GpEp,} and \code{GpE}, respectively
 #' @param Name_series the name of the column in \code{Series_df} to check
-#' @param CP a vector of dates in Date format (%Y-%m-%d) representing the change-points in the series to check
+#' @param CP a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the series to check
 #' @param limit a integer specifying the number of points in the segments
 #' before and after the change-point which will be used for testing. If NULL (default), the segments
 #' before and after each tested change-point are defined by the nearest change-points

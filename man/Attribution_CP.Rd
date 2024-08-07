@@ -14,28 +14,25 @@ Attribution_CP(
 )
 }
 \arguments{
-\item{dataset}{A list of length n where n is the number of nearby stations.
+\item{dataset}{a list of length n where n is the number of nearby stations.
 Each element of the list is a data frame representing a main-nearby station
-pair and is named after the nearby station. The data frame contains seven
-columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format and the
-remaining six columns containing numeric values representing six difference
-series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
-with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.}
+pair and is named after the nearby station. contains seven
+columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d) and the
+remaining six columns contain the six numeric signals for the six different
+series, including GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
+with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively}
 
-\item{main_cp}{A vector of dates in Date format: "\%Y-\%m-\%d" representing
-change-points in the main station.}
+\item{main_cp}{a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the main station}
 
-\item{nearby_cp}{A list of length n where n is the number of nearby station.
-Each element is named after the corresponding station and is a vector contains
-of day representing change-points for the corresponding nearby station in
-Date format: "\%Y-\%m-\%d".}
+\item{nearby_cp}{A list with n elements, where n is the number of nearby stations.
+Each element is named after the corresponding nearby station and is a vector of dates in
+Date format (\%Y-\%m-\%d) representing the change-points in the corresponding nearby station}
 
-\item{noise_model_fix}{This parameter specifies the noise model for the series.
-It can be:
+\item{noise_model_fix}{a parameter specifying the noise model for the series. It can be:
 
-  - A string indicating one noise model for all series.
+  - a string indicating one noise model for all series.
 
-  - A data frame with 6 rows and n columns, where each row represents a difference
+  - a data frame with 6 rows and n columns, where each row represents a difference
   series (e.g, \code{GE, GGp}, etc) and each column represents a nearby station,
   specifying the noise model for each series.
 
@@ -44,94 +41,93 @@ It can be:
 The noise model must be one of the following: \code{'AR(1)', 'MA(1)', 'ARMA(1,1)',
 or 'White'}.}
 
-\item{nearby_weight}{A numeric vector of length n, each element representing
+\item{nearby_weight}{a numeric vector of length n, each element representing
 the weight assigned to a nearby station for aggregating predicted configurations.
 If NULL, equal weight is assigned to all stations.}
 
-\item{limit_2side}{An integer specifying the number of points in the segments
+\item{limit_2side}{an integer specifying the number of points in the segments
 before and after the change-point used for testing. If NULL (default), the segments
 before and after each tested change-point are defined by the nearest change-points.}
 }
 \value{
 A list with four components:
-
 \describe{
   \item{Noise_model}{
-A data frame (6 rows x n columns) where:
+a data frame with size 6xn where:
 
- * rows represent the six difference series,
+ * the 6 rows represent the six difference series,
 
- * columns represent nearby stations,
+ * the n columns represent the n nearby stations,
 
  * each cell contains a string indicating the noise model (e.g., 'AR(1)',
 MA(1)') of the according series. }
 
   \item{Test_results}{
-.    A list of m data frames, where m is the number of change-points. Each data
-    frame contains t-values for changes in the mean of six difference series,
+.    a list of m data frames, where m is the number of change-points. Each data
+    frame contains t-values for the test jump at the change-point of six difference series,
     assessed for all main-nearby station pairs. The data frames are named after
     each change-point and structured with 6 rows for the six difference series
     and n columns corresponding to the nearby stations.
   }
 
   \item{Prediction_results}{
-   A list of m data frames, where m is the number of change-points. Each data
+   a list of m data frames, where m is the number of change-points. Each data
    frame is named after the corresponding change-point and contains the predicted
    configurations for each change-point. The data frames include three columns:
-   \code{candidate_config} is the candidate configuration with the highest
-   frequency from running 24 models, \code{proba} is the probability of the
-   candidate, and \code{final_config} is the final configuration. Each row
-   corresponds to a nearby station.
+   \code{max_freq_config} is the candidate configuration with the highest
+   frequency from running 24 models, \code{freq} is the associated frequency,
+   and \code{final_config} is the final configuration (see the \code{\link{Prediction_CP}} function).
+   Each row corresponds to a nearby station.
   }
 
   \item{Aggregated_results}{
-    A list of m data frames, where m is the number of change-points. Each data
+    a list of m data frames, where m is the number of change-points. Each data
     frame contains the aggregated prediction results for each change-point, based
-    on the weights specified in \code{nearby_weight}. These data frames are formatted
-    similarly to the prediction_results data frames for individual cases.
+    on the weights specified in \code{nearby_weight}. The data frames include three columns:
+   \code{max_freq_config} is the candidate configuration with the highest
+   weighted frequency from all nearby stations, \code{freq} is the associated frequency,
+   and \code{final_config} is the final configuration , i.e. \code{max_freq_config}
+   if the \code{max_freq_config} is unique. If \code{max_freq_config} is not unique,
+   the \code{final_config_all} is the one with the highest prior probability of the table given in the article
   }
 }
 }
 \description{
 This function attributes change-points detected in the difference series to one
 or both contributing series. Assuming the primary series is GPS and the secondary
-is ERA, change-points are identified in the GPS - ERA series. The \code{\link{Attribution_CP}}
+is ERA, change-points are identified in the GPS - ERA series. The
 function determines whether these change-points are due to GPS, ERA, or both.
 The method utilizes data from a nearby station providing GPS' and ERA' series.
 Users must compute six difference series (GPS-ERA, GPS-GPS', GPS-ERA', ERA-ERA',
  GPS'-ERA', GPS'-ERA) for each main-nearby station pair to serve as input.
-This function tests the significance of changes in mean in each of the six
+This function tests the significance of the jump at a given change-point in each of the six
 difference series for each main-nearby station pair, predicts configurations
-from the test results, and aggregates them from all nearby stations for each
-change-point. Please verify the format of input in the "tests/testthat/test-attribution.R"
-file.
+from the test results, and aggregates them from all nearby stations.
+Verify the format of the input in the "tests/testthat/test-attribution.R" file.
 }
 \details{
 The function operates in four main steps:
 
-\strong{1. Model Identification} (optional): uses the \code{\link{NoiseModel_Id}} function to
-to identify the noise model for each difference series.
+\strong{1. Model Identification} (optional): identify the noise model for each difference series
+using the \code{\link{NoiseModel_Id}} function.
 
-\strong{2. Significance Test}: employs the \code{\link{Test_CP}} function to test the
-significance of the change in mean in each difference series.
+\strong{2. Significance Test}: test the significance of the jump in each difference series
+using the \code{\link{Test_CP}} function.
 
-\strong{3. Configuration Prediction}: applies the \code{\link{Prediction_CP}} function
-to predict the configuration of each triplet (main, changepoint, nearby) based
-on their test result (t-value) of the six difference series.
+\strong{3. Configuration Prediction}: predict the configuration of each triplet (main, change-point, nearby) based
+on their test result (t-value) of the six difference series using the \code{\link{Prediction_CP}} function.
 
-\strong{4. Aggregation}: combines the prediction results for each change-point
-from all nearby stations.
+\strong{4. Aggregation}: combine the prediction results for each change-point from all nearby stations.
 
 Additionally, the function performs two preliminary checks:
 
-\strong{a. Cluster Check}: uses the \code{\link{check_cluster_CP}} function to
-determine if any clusters of change-points exist across all stations. A
+\strong{a. Cluster Check}: determine if any clusters of change-points exist across all stations
+using the \code{\link{check_cluster_CP}} function. A
 cluster is defined as a group of change-points within 80 days. If a cluster
 is found, the \code{\link{Attribution_CP}} function stops.
 
-\strong{b. Coincident Check}: employs the \code{\link{check_similar_CP}} function to
-identify "similar" change-points in nearby stations that occur within 10 days
-of change-points in the main station. Data between change-points in the main
-station and "similar" change-points in the nearby station is removed from the
+\strong{b. Coincident Check}: identify "similar" change-points in nearby stations that occur within 10 days
+of change-points in the main station using the \code{\link{check_similar_CP}} function.
+Data between change-points in the main station and "similar" change-points in the nearby station is removed from the
 four non-collocated series for the significance test of the change in mean.
 }

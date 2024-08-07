@@ -7,36 +7,28 @@
 NoiseModel_Id(dataset, main_cp, nearby_cp)
 }
 \arguments{
-\item{dataset}{A list of length n where n is the number of nearby stations.
+\item{dataset}{a list with length n where n is the number of nearby stations.
 Each element of the list is a data frame representing a main-nearby station
 pair and is named after the nearby station. The data frame contains seven
-columns: the first labeled "\code{Date}" with dates in "YYYY-MM-DD" format and the
-remaining six columns containing numeric values representing six difference
-series: GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
-with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively.}
+columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d) and the
+remaining six columns contain the six numeric signals for the six different
+series, including GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
+with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively}
 
-\item{main_cp}{A vector of dates in Date format: "\%Y-\%m-\%d" representing
-change-points in the main station.}
+\item{main_cp}{a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the main station}
 
-\item{nearby_cp}{A list with n elements, where n is the number of nearby stations.
-Each element is named after the corresponding nearby station and is a vector containing
-change-points for the corresponding nearby station in Date format: "\%Y-\%m-\%d".}
+\item{nearby_cp}{a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the nearby station}
 }
 \value{
-A data frame (6 rows x n columns) where:
-
- * rows represent the six difference series,
-
- * columns represent nearby stations,
-
- * each cell contains a string indicating the noise model (e.g., \code{AR(1)',
-MA(1)'}) of the according series.
+a data frame, with size 6 x n, where the rows represent the 6 difference series and
+the columns represent the n nearby stations. Each cell contains a string indicating the noise model (White, AR(1),
+MA(1), ARMA(1,1))
 }
 \description{
-This function fits the noise model for six difference series in \code{dataset}.
-In each difference series, the longest homogeneous segment is used to fit a model
-that includes the mean, periodic bias, and heteroskedastic noise. The variance
-is estimated using a moving window technique. Fitting is performed via weighted
-least squares. Normalized residuals are utilized to fit an ARMA model with a
-maximum order of 1. Only significant parameters are retained and reported in the output.
+This function fits the noise model for six difference series in \code{dataset}
+according to three ARMA model and the white noise. In each difference series, the longest
+homogeneous segment is used to fit a model that includes a mean, a periodic bias, and
+a heteroskedastic noise. The variance is estimated using a moving window technique.
+Fitting is performed via weighted least squares. Normalized residuals are utilized to fit an ARMA model with a
+maximum order of 1. Only significant parameters are retained and reported in the output
 }

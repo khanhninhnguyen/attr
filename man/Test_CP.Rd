@@ -16,45 +16,41 @@ Test_CP(
 )
 }
 \arguments{
-\item{Series_df}{A data frame containing data for a main-nearby pair. It contains
-at least two columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format
-and the second being one of the six difference series, including: GPS - ERA, GPS - GPS',
-GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp, GEp, EEp,
-GpEp,} and \code{GpE}, respectively.}
+\item{Series_df}{a data frame containing data for a main-nearby pair.
+It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d)
+and the second contains one of the six difference series, including GPS - ERA, GPS - GPS',
+GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp,
+GEp, EEp, GpEp,} and \code{GpE}, respectively}
 
-\item{Name_series}{A string representing the name of the column in \code{Series_df} to check.}
+\item{Name_series}{the name of the column in \code{Series_df} to check}
 
-\item{CP}{A date in Date format: "%Y-%m-%d" representing a change-point
-in the main station.}
+\item{CP}{a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the series to check}
 
-\item{limit}{An integer specifying the number of points in the segments
-before and after the change-point used for testing. If NULL (default), the segments
-before and after each tested change-point are defined by the nearest change-points.}
+\item{limit}{a integer specifying the number of points in the segments
+before and after the change-point which will be used for testing. If NULL (default), the segments
+before and after each tested change-point are defined by the nearest change-points}
 
-\item{tol}{A numeric value indicating the tolerance of the parameter to stop
-the iterative FGLS.}
+\item{tol}{a numeric value indicating the stopping tolerance on the parameter in the iterative FGLS algorithm. Default is 0.01}
 
-\item{noise_model}{A vector of 3 integer values indicating the order of the ARMA(p,0,q) model, where
-p and q can be 0 or 1.}
+\item{noise_model}{a string indicating one noise model. It must be one of the following: \code{'AR(1)', 'MA(1)', 'ARMA(1,1)',
+or 'White'}}
 
-\item{length_win}{An integer value specifying the length of the window used
-to compute the moving variance.}
+\item{length_win}{an integer value specifying the length of the window used to compute the moving variance. Default is 60}
 
-\item{name_case}{A string value indicating the name of the file to save the detailed results.
-By default, the detailed results are not saved.}
+\item{name_case}{the name of the file to save the detailed results. By default, the detailed results are not saved and default is NULL}
 }
 \value{
 A list of 2 elements:
-
-1. A vector of dates that have available data used in the test.
-
-2. A summary data frame of the test results with dimensions (l x 4), where l
+\itemize{
+\item \code{Used_dates} a vector of dates used for the test,
+\item \code{Summary_tab} a summary data frame of the test results size l x 4, where l
 is the number of variables in the model, and the 4 columns correspond to the
-estimates, their standard errors, t-values, and p-values. By default, 10 variables
-are included in the output, such as the mean, periodic bias (modeled by 4 coupled
+estimates, their standard errors, t-values, and p-values respectively. By default, 10 variables
+are included in the output, such as the global mean, periodic bias (modeled by 4 coupled
 sine and cosine Fourier series), and the offset.
 }
+}
 \description{
-Tests the significance of the jump at breakpoints in a series using Feasible
-Generalized Least Squares.
+This function makes the test of the jump at change-points in a series using Feasible
+Generalized Least Squares (FGLS)
 }

@@ -11,12 +11,12 @@
 #' @param dataset a list with length n where n is the number of nearby stations.
 #' Each element of the list is a data frame representing a main-nearby station
 #' pair and is named after the nearby station. The data frame contains seven
-#' columns: the first column,labeled \code{date}, contains the dates in Date format (%Y-%m-%d) and the
+#' columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d) and the
 #' remaining six columns contain the six numeric signals for the six different
 #' series, including GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
 #' with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively
-#' @param main_cp a vector of dates in Date format (%Y-%m-%d) representing the change-points in the main station
-#' @param nearby_cp a vector of dates in Date format (%Y-%m-%d) representing the change-points in the nearby station
+#' @param main_cp a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the main station
+#' @param nearby_cp a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the nearby station
 #'
 #' @return a data frame, with size 6 x n, where the rows represent the 6 difference series and
 #' the columns represent the n nearby stations. Each cell contains a string indicating the noise model (White, AR(1),

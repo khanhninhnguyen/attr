@@ -7,22 +7,21 @@
 Prediction_CP(test_result)
 }
 \arguments{
-\item{test_result}{A data frame contains t-values for changes in the mean of
-six difference series, assessed for all main-nearby station pairs. The data frames
-are structured with 6 rows for the six difference series and n columns corresponding
-to the nearby stations.}
+\item{test_result}{a data frame with size n x 6 containing the t-values of the existence test
+of the jump at a given change-point for all main-nearby station pairs with a given main station and its n nearby stations.}
 }
 \value{
-A data frame contains the predicted configurations for each change-point.
-The data frames include three columns: \code{candidate_config} is the candidate
-configuration with the highest frequency from running 24 models, \code{proba}
-is the probability of the candidate, and \code{final_config} is the final configuration.
-Each row corresponds to a nearby station.
+a data frame with size n x 3 containing the predicted configurations for the given change-point
+and the n nearby stations.The three columns are: \code{max_freq_config} is the candidate
+configuration with the highest frequency from running the 24 predictive rules, \code{freq}
+is the associated frequency of this candidate, and \code{final_config_one} is the final configuration, i.e.
+\code{max_freq_config} if the \code{max_freq_config} is unique. If \code{max_freq_config} is not unique,
+the \code{final_config} is the one with the highest prior probability of the table given in the article
 }
 \description{
-This function applies the trained predictive rules using Random Forest
-on the test results, which include 6 t-values for each change-point and 1 nearby
-station.  The 24 predictive rules stored in the "extdata/PredictiveRule.RDS"
-file are trained with the IWV converted from the Nevada Geodetic Laboratory solution
-and ERA5 data.
+This function applies trained predictive rules, built from the Random Forest algorithm,
+on test results for a given change-point of a given station and its available nearby stations.
+24 predictive rules are used and stored in the "extdata/PredictiveRule.RDS" file.
+They are trained with the IWV converted from the Nevada Geodetic Laboratory solution and ERA5,
+and all lead to same and smallest classification error
 }

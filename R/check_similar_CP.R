@@ -8,16 +8,16 @@
 #' significance test of the change in mean
 #'
 #' @param Series_df a data frame containing data for a main-nearby pair. It contains seven
-#' columns: the first column,labeled \code{date}, contains the dates in Date format (%Y-%m-%d) and the
+#' columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d) and the
 #' remaining six columns contain the six numeric signals for the six different
 #' series, including GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
 #' with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively
-#' @param main_cp a vector of dates in Date format (%Y-%m-%d) representing the change-points in the main station
-#' @param nearby_cp_one a vector of dates in Date format (%Y-%m-%d) representing the change-points in the nearby station
+#' @param main_cp a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the main station
+#' @param nearby_cp_one a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the nearby station
 #' @param threshold an integer specifying the number of points between two change-points,
 #' which defines if it is a "similar" change-point. Default is 10
 #'
-#' @return a vector of dates in Date format (%Y-%m-%d) representing the "similar"
+#' @return a vector of dates in Date format (\%Y-\%m-\%d) representing the "similar"
 #' change-points in the nearby station to the change-points in the main station
 #'
 #' @importFrom tidyr drop_na

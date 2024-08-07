@@ -2,10 +2,7 @@ rm(list=ls())
 # devtools::load_all()
 library(testthat)
 # load data and make them in a good form
-
-dataset <- readRDS(file = system.file("extdata", "dataset.RDS",
-                                       package = "attr"))
-
+data("dataset")
 # add change-points to test
 convert_dates <- function(dates_list) {
   lapply(dates_list, function(dates) as.Date(dates, format = "%Y-%m-%d"))

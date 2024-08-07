@@ -2,27 +2,26 @@
 % Please edit documentation in R/check_cluster_CP.R
 \name{check_cluster_CP}
 \alias{check_cluster_CP}
-\title{Check if there is a cluster in segmentation result}
+\title{Check if there is cluster(s) in the segmentation results}
 \usage{
 check_cluster_CP(Series_df, Name_series, CP)
 }
 \arguments{
-\item{Series_df}{A data frame containing data for a main-nearby pair. It contains
-at least two columns: the first labeled \code{Date} with dates in "YYYY-MM-DD" format
-and the second being one of the six difference series, including: GPS - ERA, GPS - GPS',
+\item{Series_df}{a data frame containing data for a main-nearby pair.
+It contains at least two columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d)
+and the second contains one of the six difference series, including GPS - ERA, GPS - GPS',
 GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA, with names \code{GE, GGp,
-GEp, EEp, GpEp,} and \code{GpE}, respectively.}
+GEp, EEp, GpEp,} and \code{GpE}, respectively}
 
-\item{Name_series}{The name of the column in \code{Series_df} to check.}
+\item{Name_series}{the name of the column in \code{Series_df} to check}
 
-\item{CP}{A vector of dates in Date format: "%Y-%m-%d" representing
-change-points in the series to check.}
+\item{CP}{a vector of dates in Date format (\%Y-\%m-\%d) given the change-points in the series to check}
 }
 \value{
-Vector of break points in a cluster in Date format: "\%Y-\%m-\%d"
+a vector of change-points which belongs to a cluster in Date format
 }
 \description{
-This function determine if any clusters of change-points exist in a station
-based on segmentation results. A cluster is defined as a group of change-points
-within 80 days.
+This function determines if any clusters of change-points exist in the segmentation
+results for a series. A cluster is defined as a group of change-points
+separated at least by 80 days
 }

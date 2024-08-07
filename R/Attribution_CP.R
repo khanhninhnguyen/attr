@@ -43,14 +43,14 @@
 #' @param dataset a list of length n where n is the number of nearby stations.
 #' Each element of the list is a data frame representing a main-nearby station
 #' pair and is named after the nearby station. contains seven
-#' columns: the first column,labeled \code{date}, contains the dates in Date format (%Y-%m-%d) and the
+#' columns: the first column,labeled \code{date}, contains the dates in Date format (\%Y-\%m-\%d) and the
 #' remaining six columns contain the six numeric signals for the six different
 #' series, including GPS - ERA, GPS - GPS', GPS - ERA', ERA - ERA', GPS' - ERA', and GPS' - ERA,
 #' with names \code{GE, GGp, GEp, EEp, GpEp,} and \code{GpE}, respectively
-#' @param main_cp a vector of dates in Date format (%Y-%m-%d) representing the change-points in the main station
+#' @param main_cp a vector of dates in Date format (\%Y-\%m-\%d) representing the change-points in the main station
 #' @param nearby_cp A list with n elements, where n is the number of nearby stations.
 #' Each element is named after the corresponding nearby station and is a vector of dates in
-#' Date format (%Y-%m-%d) representing the change-points in the corresponding nearby station
+#' Date format (\%Y-\%m-\%d) representing the change-points in the corresponding nearby station
 #' @param noise_model_fix a parameter specifying the noise model for the series. It can be:
 #'
 #'   - a string indicating one noise model for all series.
