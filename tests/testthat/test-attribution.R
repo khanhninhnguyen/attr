@@ -3,9 +3,6 @@ rm(list=ls())
 library(testthat)
 # load data and make them in a good form
 
-predictive_models = readRDS(file = system.file("extdata", "PredictiveRule.RDS",
-                                               package = "attr"))
-
 dataset <- readRDS(file = system.file("extdata", "dataset.RDS",
                                        package = "attr"))
 
