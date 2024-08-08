@@ -29,13 +29,13 @@ The function determines whether these change-points are due to GPS, ERA, or both
 
 You can install the development version of `attr` from GitHub with:
 
-```{r}
+```{r, eval=FALSE}
 
 # Install devtools if you haven't already
-# install.packages("devtools")
+install.packages("devtools")
 
 # Install the package from GitHub
-# devtools::install_github("khanhninhnguyen/attr")
+devtools::install_github("khanhninhnguyen/attr")
 ```
 
 
