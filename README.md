@@ -11,20 +11,21 @@ GPS, ERA, or both.
 
 ## Table of Contents
 
--   [Installation](#installation)
--   [Usage](#usage)
--   [Examples](#examples)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
 
 ## Installation
 
 You can install the development version of `attr` from GitHub with:
 
 ``` r
+
 # Install devtools if you haven't already
-# install.packages("devtools")
+install.packages("devtools")
 
 # Install the package from GitHub
-# devtools::install_github("khanhninhnguyen/attr")
+devtools::install_github("khanhninhnguyen/attr")
 ```
 
 ## Usage
