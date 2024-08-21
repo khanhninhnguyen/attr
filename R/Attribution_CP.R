@@ -233,7 +233,7 @@ Attribution_CP <- function(dataset,
     begin <-  List_CP[tail(which(List_CP < CP),1)]
     end <- List_CP[which( List_CP > CP)[1]]
 
-    if (length(begin) == 0 | length(end) ==0) {
+    if (length(begin) == 0 | length(end) == 0) {
 
       t_val_jump <- NA
 

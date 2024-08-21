@@ -76,9 +76,13 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
     Series_df <- rbind(before_data, after_data) %>%
       tidyr:: complete(date = seq(min(before_data$date),
                                   max(after_data$date), by = "day"))
+
+    new_ends = get_min_max_date(Series_df, Name_series)
+
+    Series_df <- Series_df %>%
+      dplyr:: filter(date >= new_ends[1] & date <= new_ends[2])
   }
 
-  # stop if the series is too short
   stopifnot("Series is too short" = isTRUE(nrow(before_data) > lmin))
   stopifnot("Series is too short" = isTRUE(nrow(after_data) > lmin))
 
