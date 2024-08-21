@@ -123,6 +123,7 @@ Attribution_CP <- function(dataset,
                            main_cp,
                            nearby_cp,
                            noise_model_fix = NULL,
+                           detail = NULL,
                            nearby_weight = NULL,
                            limit_2side = 100,
                            lmin = 0){
@@ -246,7 +247,6 @@ Attribution_CP <- function(dataset,
                           CP = CP,
                           noise_model = noise_model,
                           limit = limit_period,
-                          name_case = NULL,
                           lmin = lmin)
 
       t_val <- fit_fgls$Summary_tab$`t value`
