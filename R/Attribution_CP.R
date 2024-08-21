@@ -124,7 +124,8 @@ Attribution_CP <- function(dataset,
                            nearby_cp,
                            noise_model_fix = NULL,
                            nearby_weight = NULL,
-                           limit_2side = 100){
+                           limit_2side = 100,
+                           lmin = 0){
   #####
   # pre-check
   date <- candidate_config <- max_freq_config <-  NULL
@@ -245,7 +246,8 @@ Attribution_CP <- function(dataset,
                           CP = CP,
                           noise_model = noise_model,
                           limit = limit_period,
-                          name_case = NULL)
+                          name_case = NULL,
+                          lmin = lmin)
 
       t_val <- fit_fgls$Summary_tab$`t value`
       t_val_jump <- t_val[which(rownames(fit_fgls$Summary_tab) == "jump")]
@@ -303,6 +305,7 @@ Attribution_CP <- function(dataset,
                         Name_series = z,
                         noise_model = noise_model_z,
                         limit_period = limit_2side)
+
         }, error = function(e) {
           # If there's an error, return NA
           t <- NA

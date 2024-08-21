@@ -79,8 +79,8 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
   }
 
   # stop if the series is too short
-  stopifnot("Series is too short" = isTRUE(nrow(before_data) < lmin))
-  stopifnot("Series is too short" = isTRUE(nrow(after_data) < lmin))
+  stopifnot("Series is too short" = isTRUE(nrow(before_data) > lmin))
+  stopifnot("Series is too short" = isTRUE(nrow(after_data) > lmin))
 
   df_XY = construct_XY_df(Series_df,
                           name_series = Name_series,
