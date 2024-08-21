@@ -36,8 +36,8 @@
 #'
 #' @export
 #'
-Test_CP <- function(Series_df, Name_series, CP, limit = NULL,
-                             tol = 0.01, noise_model, length_win = 60, name_case = NULL){
+Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
+                    noise_model, length_win = 60, name_case = NULL, lmin = 0){
 
   date <- .data <- wts <- NULL
 
@@ -77,6 +77,10 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL,
       tidyr:: complete(date = seq(min(before_data$date),
                                   max(after_data$date), by = "day"))
   }
+
+  # stop if the series is too short
+  stopifnot("Series is too short" = isTRUE(nrow(before_data) < lmin))
+  stopifnot("Series is too short" = isTRUE(nrow(after_data) < lmin))
 
   df_XY = construct_XY_df(Series_df,
                           name_series = Name_series,
