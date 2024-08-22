@@ -124,7 +124,7 @@ Attribution_CP <- function(dataset,
                            nearby_cp,
                            noise_model_fix = NULL,
                            nearby_weight = NULL,
-                           save_used_dates = NULL,
+                           name_main = NULL,
                            limit_2side = 100,
                            lmin = 0){
   #####
@@ -228,7 +228,7 @@ Attribution_CP <- function(dataset,
   }
 
   #####
-  test_sig <- function(List_CP, CP, df, Name_series, noise_model, limit_period) {
+  test_sig <- function(List_CP, CP, df, Name_series, noise_model, limit_period, name_case, save_used_dates) {
 
     begin <-  List_CP[tail(which(List_CP < CP),1)]
     end <- List_CP[which( List_CP > CP)[1]]
@@ -241,23 +241,26 @@ Attribution_CP <- function(dataset,
 
       data_test <- df %>%
         dplyr:: filter(date > begin & date <= end)
+
+      if (is.null(save_used_dates)){
+        name_case <- NULL
+      }
+
+      # Regression
       fit_fgls <- Test_CP(Series_df = data_test,
                           Name_series = Name_series,
                           CP = CP,
                           noise_model = noise_model,
                           limit = limit_period,
                           lmin = lmin,
-                          save_res = save_res)
+                          save_res = name_main,
+                          name_case = name_case)
 
       t_val <- fit_fgls$Summary_tab$`t value`
       t_val_jump <- t_val[which(rownames(fit_fgls$Summary_tab) == "jump")]
-      used_date_one <- fit_fgls$Used_dates
     }
 
-    test_sig_out <- list(t_val_jump = t_val_jump,
-                         used_date_one = used_date_one)
-
-    return(test_sig_out)
+    return(t_val_jump)
   }
   # Significance test for the jump in the main
 
@@ -265,42 +268,24 @@ Attribution_CP <- function(dataset,
                            get_min_max_date(data = dataset[[1]],
                                             column_name = "GE")))
 
-  get_t_d_values <- function(cp) {
+
+  t_values_main = sapply(main_cp, function(x) {
+    t_val <- NA
     tryCatch({
-      result <- test_sig(List_CP = List_CP_main,
-                         CP = cp,
-                         df = dataset[[1]],
-                         Name_series = "GE",
-                         noise_model = Noise_model[1,1],
-                         limit_period = limit_2side)
-      return(list(t_val_jump = result$t_val_jump,
-                  used_date_one = result$used_date_one))
+      t_val <- test_sig(List_CP = List_CP_main,
+                        CP = x,
+                        df = dataset[[1]],
+                        Name_series = "GE",
+                        noise_model = Noise_model[1,1],
+                        limit_period = limit_2side,
+                        name_case = name_main,
+                        save_used_dates = name_main)
     }, error = function(e) {
-      return(list(t = NA, d = NA))
+
     })
-  }
+    return(t_val)
+  })
 
-  # Apply the function to each element in main_cp
-  results <- sapply(main_cp, get_t_d_values, simplify = FALSE)
-
-  # Extract t and d values into separate vectors
-  t_values_main <- sapply(results, function(x) x$t_val_jump)
-  used_date_main <- lapply(results, function(x) x$used_date_one)
-
-  # t_values_main = sapply(main_cp, function(x) {
-  #   t_val <- NA
-  #   tryCatch({
-  #     t_val <- test_sig(List_CP = List_CP_main,
-  #                       CP = x,
-  #                       df = dataset[[1]],
-  #                       Name_series = "GE",
-  #                       noise_model = Noise_model[1,1],
-  #                       limit_period = limit_2side)$t_val_jump
-  #   }, error = function(e) {
-  #
-  #   })
-  #   return(t_val)
-  # })
   # Significance test for the other 5 test
   t_values_other = lapply(nearby_name, function(x) {
     t <- NA
@@ -330,7 +315,9 @@ Attribution_CP <- function(dataset,
                         df = dataset[[x]],
                         Name_series = z,
                         noise_model = noise_model_z,
-                        limit_period = limit_2side)
+                        limit_period = limit_2side,
+                        name_case = paste0(x,"-", name_main),
+                        save_used_dates = name_main)
 
         }, error = function(e) {
           # If there's an error, return NA
