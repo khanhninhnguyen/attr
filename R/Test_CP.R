@@ -37,7 +37,8 @@
 #' @export
 #'
 Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
-                    noise_model, length_win = 60, name_case = NULL, lmin = 0){
+                    noise_model, length_win = 60, name_case = NULL, lmin = 0,
+                    save_res = NULL){
 
   date <- .data <- wts <- NULL
 
@@ -189,20 +190,29 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
                    t = (end_time - start_time),
                    df_XY = df_XY))
 
-  if (!is.null(name_case)) {
-    save(Res_FGLS,
-         file = paste0("Res_FGLS_",
-                       name_case,
-                       Name_series,
-                       CP,
-                       ".RData"))
-  }
+  # if (!is.null(name_case)) {
+  #   save(Res_FGLS,
+  #        file = paste0("Res_FGLS_",
+  #                      name_case,
+  #                      Name_series,
+  #                      CP,
+  #                      ".RData"))
+  # }
 
   summary_tab <- as.data.frame(apply(fit.gls$t.table, 2, function(x) as.numeric(x)))
   rownames(summary_tab) <- rownames(fit.gls$t.table)
 
   Res <- list(Summary_tab = summary_tab,
               Used_dates = Series_df$date)
+
+  if(!is.null(save_res)){
+    saveRDS(Res,
+         file = paste0("Test_CP_",
+                       name_case,
+                       Name_series,
+                       CP,
+                       ".rds"))
+  }
 
   return(Res)
 
