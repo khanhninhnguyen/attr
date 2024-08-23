@@ -12,18 +12,19 @@
 #' GEp, EEp, GpEp,} and \code{GpE}, respectively
 #' @param Name_series the name of the column in \code{Series_df} to check
 #' @param CP a vector of dates in Date format (\%Y-\%m-\%d) given the change-points in the series to check
+#' @param threshold a number indicating the maximum length of a cluster
 #'
 #' @return a vector of change-points which belongs to a cluster in Date format
 #'
 #' @export
 #'
-check_cluster_CP <- function(Series_df, Name_series, CP) {
+check_cluster_CP <- function(Series_df, Name_series, CP, threshold = 80) {
 
   if (length(CP) > 0 ) {
     begin_end = get_min_max_date(Series_df, Name_series)
     List_breaks <- sort(c(begin_end, CP))
 
-    get_cluster <- function(X, thres = 80){
+    get_cluster <- function(X, thres = threshold){
       output <- integer(length(X))
       counter <- 1 # Initialize a counter for numbering elements < 80
 

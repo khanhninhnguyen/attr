@@ -82,7 +82,7 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
     if (is.null(begin_day) & is.null(end_day)){
 
       begin_end = get_min_max_date(Series_df, Name_series)
-      Endpoints <- sort(c(begin_end, List_CP))
+      Endpoints <- sort(c(begin_end, List_CP[which(List_CP > begin_end[[1]] & List_CP < begin_end[[2]])]))
       longest_seg_ind = which.max(diff(Endpoints, lag = 1))
       list_day_avai = Series_df$date[which(!is.na(Series_df[[Name_series]]))]
       begin_day_0 = Endpoints[longest_seg_ind]
