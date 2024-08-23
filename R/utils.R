@@ -228,7 +228,9 @@ construct_XY_df <- function(data, name_series, CP_ind = NULL, Fourier = TRUE){
 
   Data_XY <- Data_XY %>%
     dplyr:: filter(!is.na(signal)) %>%
-    tidyr:: complete(date = seq(min(date), max(date), by = "day")) %>%
+    tidyr:: complete(date = seq(min(date), max(date), by = "day"))
+
+  Data_XY <- Data_XY %>%
     dplyr:: mutate(complete.time = 1:nrow(Data_XY)) %>%
     dplyr:: select(-all_of("date"))
 
