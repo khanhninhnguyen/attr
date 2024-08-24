@@ -193,38 +193,45 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
     coeffient = rep(NA, 3)
     coeffient[which(pq!= 0)] = pre_fit$coef
 
-    sig_test <- lmtest::coeftest(pre_fit)
-    p_vals = sig_test[,4]
-    p_vals =  p_vals[which(rownames(sig_test) %in% c("ar1", "ma1"))]
-    sig_order = rownames(sig_test)[which(p_vals < significant.level)]
-
-    if(any(sig_order %in% c("ar1"))){
-      p = 1
-    }else{
-      p = 0
-    }
-
-    if(any(sig_order %in% c("ma1"))){
-      q = 1
-    }else{
-      q = 0
-    }
-
-    if(sum(pq) != (p+q)){
-      coeffient = rep(NA, 3)
-      pq = c( p, 0, q)
-      fitARIMA = try(arima( signal, pq, method="ML"), TRUE)
-      coeffient[which(pq!= 0)] = fitARIMA$coef
-      sig_test <- lmtest::coeftest(fitARIMA)
+    if (all(is.na(coeffient))) {
+      pq = pq[-2]
+      coef = coeffient[-2]
+      p_values = c(NA, NA)
+    } else {
+      sig_test <- lmtest::coeftest(pre_fit)
       p_vals = sig_test[,4]
       p_vals =  p_vals[which(rownames(sig_test) %in% c("ar1", "ma1"))]
-    }
+      sig_order = rownames(sig_test)[which(p_vals < significant.level)]
 
-    p_values = rep(NA, 3)
-    p_values[which(pq!=0)] <- p_vals
-    pq = pq[-2]
-    coef = coeffient[-2]
-    p_values = p_values[-2]
+      if(any(sig_order %in% c("ar1"))){
+        p = 1
+      }else{
+        p = 0
+      }
+
+      if(any(sig_order %in% c("ma1"))){
+        q = 1
+      }else{
+        q = 0
+      }
+
+      if(sum(pq) != (p+q)){
+        coeffient = rep(NA, 3)
+        pq = c( p, 0, q)
+        fitARIMA = try(arima( signal, pq, method="ML"), TRUE)
+        coeffient[which(pq!= 0)] = fitARIMA$coef
+        sig_test <- lmtest::coeftest(fitARIMA)
+        p_vals = sig_test[,4]
+        p_vals =  p_vals[which(rownames(sig_test) %in% c("ar1", "ma1"))]
+      }
+
+      p_values = rep(NA, 3)
+      p_values[which(pq!=0)] <- p_vals
+      pq = pq[-2]
+      coef = coeffient[-2]
+      p_values = p_values[-2]
+
+    }
 
     return(list(pq = pq, coef = coef, p = p_values))
   }
