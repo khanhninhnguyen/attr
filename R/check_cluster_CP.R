@@ -18,7 +18,7 @@
 #'
 #' @export
 #'
-check_cluster_CP <- function(Series_df, Name_series, CP, threshold = 80) {
+check_cluster_CP <- function(Series_df, Name_series, CP, threshold = 79) {
 
   if (length(CP) > 0 ) {
     begin_end = get_min_max_date(Series_df, Name_series)

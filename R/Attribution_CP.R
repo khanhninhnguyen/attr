@@ -127,6 +127,7 @@ Attribution_CP <- function(dataset,
                            name_main = NULL,
                            limit_2side = 100,
                            lmin = 0){
+  options(warn = 2)
   #####
   # pre-check
   date <- candidate_config <- max_freq_config <-  NULL
