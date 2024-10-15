@@ -290,7 +290,7 @@ Attribution_CP <- function(dataset,
   # Significance test for the other 5 test
   t_values_other = lapply(nearby_name, function(x) {
     t <- NA
-    nearby_cp_z <- sort(c(nearby_cp[[x]],
+    nearby_cp_z <- sort(c(nearby_cp_m[[x]],
                           get_min_max_date(data = dataset[[x]],
                                            column_name = "GpEp")))
 
