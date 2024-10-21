@@ -4,7 +4,7 @@
 \alias{check_cluster_CP}
 \title{Check if there is cluster(s) in the segmentation results}
 \usage{
-check_cluster_CP(Series_df, Name_series, CP)
+check_cluster_CP(Series_df, Name_series, CP, threshold = 79)
 }
 \arguments{
 \item{Series_df}{a data frame containing data for a main-nearby pair.
@@ -16,6 +16,8 @@ GEp, EEp, GpEp,} and \code{GpE}, respectively}
 \item{Name_series}{the name of the column in \code{Series_df} to check}
 
 \item{CP}{a vector of dates in Date format (\%Y-\%m-\%d) given the change-points in the series to check}
+
+\item{threshold}{a number indicating the maximum length of a cluster}
 }
 \value{
 a vector of change-points which belongs to a cluster in Date format

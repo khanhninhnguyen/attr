@@ -69,6 +69,12 @@
 #' @param limit_2side an integer specifying the number of points in the segments
 #' before and after the change-point used for testing. If NULL (default), the segments
 #' before and after each tested change-point are defined by the nearest change-points.
+#' @param save_result any values different to NULL specifying test results (summary
+#' table and date used for test) will be saved
+#' @param name_main a string specifying name of the main station (optional)
+#' @param lmin an integer specifying minimum number of point in both sides for test.
+#' At default, lmin = 0.
+#'
 #'
 #' @return A list with four components:
 #' \describe{
@@ -125,6 +131,7 @@ Attribution_CP <- function(dataset,
                            noise_model_fix = NULL,
                            nearby_weight = NULL,
                            name_main = NULL,
+                           save_result = 0,
                            limit_2side = 100,
                            lmin = 0){
   options(warn = 2)
@@ -229,7 +236,7 @@ Attribution_CP <- function(dataset,
   }
 
   #####
-  test_sig <- function(List_CP, CP, df, Name_series, noise_model, limit_period, name_case, save_used_dates) {
+  test_sig <- function(List_CP, CP, df, Name_series, noise_model, limit_period, name_case, save_result) {
 
     begin <-  List_CP[tail(which(List_CP < CP),1)]
     end <- List_CP[which( List_CP > CP)[1]]
@@ -243,7 +250,7 @@ Attribution_CP <- function(dataset,
       data_test <- df %>%
         dplyr:: filter(date > begin & date <= end)
 
-      if (is.null(save_used_dates)){
+      if (is.null(save_result)){
         name_case <- NULL
       }
 
@@ -254,7 +261,7 @@ Attribution_CP <- function(dataset,
                           noise_model = noise_model,
                           limit = limit_period,
                           lmin = lmin,
-                          save_res = name_main,
+                          save_result = save_result,
                           name_case = name_case)
 
       t_val <- fit_fgls$Summary_tab$`t value`
@@ -269,56 +276,40 @@ Attribution_CP <- function(dataset,
                            get_min_max_date(data = dataset[[1]],
                                             column_name = "GE")))
 
-
-  t_values_main = sapply(main_cp, function(x) {
-    t_val <- NA
-    tryCatch({
-      t_val <- test_sig(List_CP = List_CP_main,
-                        CP = x,
-                        df = dataset[[1]],
-                        Name_series = "GE",
-                        noise_model = Noise_model[1,1],
-                        limit_period = limit_2side,
-                        name_case = name_main,
-                        save_used_dates = name_main)
-    }, error = function(e) {
-
-    })
-    return(t_val)
-  })
-
   # Significance test for the other 5 test
-  t_values_other = lapply(nearby_name, function(x) {
+  t_val_all = lapply(nearby_name, function(x) {
     t <- NA
+
     nearby_cp_z <- sort(c(nearby_cp_m[[x]],
                           get_min_max_date(data = dataset[[x]],
                                            column_name = "GpEp")))
 
     List_joint = sort(c(List_CP_main, nearby_cp_z))
 
-    CP_five_series <- list(GGp = List_joint,
+    CP_six_series <- list( GE = List_joint,
+                           GGp = List_joint,
                            GEp = List_joint,
                            EEp = List_joint,
-                           GpEp = nearby_cp_z,
+                           GpEp = List_joint,
                            GpE = List_joint
     )
 
     t_val_all_brk <- sapply(main_cp, function(y){
 
-      five_t_val <- sapply(list_six_diff[-1], function(z){
+      five_t_val <- sapply(list_six_diff, function(z){
 
         noise_model_z = unlist(Noise_model[which(rownames(Noise_model) == z), x])
 
         tryCatch({
           # Attempt to run the problematic function
-          t <- test_sig(List_CP = CP_five_series[[z]],
+          t <- test_sig(List_CP = CP_six_series[[z]],
                         CP = y,
                         df = dataset[[x]],
                         Name_series = z,
                         noise_model = noise_model_z,
                         limit_period = limit_2side,
                         name_case = paste0(x,"-", name_main),
-                        save_used_dates = name_main)
+                        save_result = save_result)
 
         }, error = function(e) {
           # If there's an error, return NA
@@ -327,22 +318,16 @@ Attribution_CP <- function(dataset,
         setNames(t, z)
         return(t)
       })
-
       return(five_t_val)
 
     })
+
+    colnames(t_val_all_brk) <- as.character(main_cp)
+
     return(t_val_all_brk)
 
   })
-  names(t_values_other) <- nearby_name
-
-  t_val_all <- lapply(t_values_other, function(x) {
-    new_row <- matrix(t_values_main, nrow = 1) # Create a new row of zeros (change this as needed)
-    y <- rbind(new_row, x) # Bind the new row at the top
-    rownames(y)[1] <- "GE"
-    colnames(y) <- as.character(main_cp)
-    y
-  })
+  names(t_val_all) <- nearby_name
 
   #####
   # Prediction
@@ -361,6 +346,7 @@ Attribution_CP <- function(dataset,
     most_freq_vals <- names(counts)[counts == max_counts]
     return(paste(most_freq_vals, collapse=", "))
   }
+
   select_final_c <- function(x) {
 
     if (isTRUE(grepl(",",x))) {

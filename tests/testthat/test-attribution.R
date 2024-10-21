@@ -1,6 +1,7 @@
 rm(list=ls())
 # devtools::load_all()
 library(testthat)
+library(attr)
 # load data and make them in a good form
 data("dataset")
 # add change-points to test
@@ -78,14 +79,14 @@ test_that("Check similar change points", {
 })
 
 
-# Test Model Identification -----------------------------------------------
-
+#' # Test Model Identification -----------------------------------------------
+#'
 exp_NoiseModel = data.frame(
   bces = c("ARMA(1,1)", "AR(1)", "ARMA(1,1)", "AR(1)", "ARMA(1,1)", "ARMA(1,1)"),
   ptaa = c("ARMA(1,1)", rep("AR(1)", 3), "ARMA(1,1)", "AR(1)"),
   row.names = c("GE", "GGp", "GEp", "EEp", "GpEp", "GpE")
 )
-
+#'
 test_that("Check model identification", {
   expect_identical(NoiseModel_Id(dataset = dataset[c("bces", "ptaa")],
                                  main_cp = main_cp,
@@ -137,8 +138,8 @@ test_that("Attribution", {
   expect_identical(as.character(test_Attribution_CP_c2$Prediction_agg[[as.character(main_cp)]])[1],
                    "23")
 })
-
-## Case 3: known noise model for each series
+#'
+#' ## Case 3: known noise model for each series
 test_Attribution_CP_c3 = Attribution_CP(dataset[c("bces", "ptaa")],
                                         main_cp = main_cp,
                                         nearby_cp = nearby_cp[c("bces", "ptaa")],

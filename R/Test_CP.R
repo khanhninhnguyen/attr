@@ -18,7 +18,9 @@
 #' @param noise_model a string indicating one noise model. It must be one of the following: \code{'AR(1)', 'MA(1)', 'ARMA(1,1)',
 #' or 'White'}
 #' @param length_win an integer value specifying the length of the window used to compute the moving variance. Default is 60
-#' @param name_case the name of the file to save the detailed results. By default, the detailed results are not saved and default is NULL
+#' @param save_result the name of the file to save the detailed results. By default, the detailed results are not saved and default is NULL
+#' @param lmin an integer specifying minimum number of point in both side
+#' @param name_case character string indicating name of file in which test results are saved
 #'
 #' @return A list of 2 elements:
 #' \itemize{
@@ -38,7 +40,7 @@
 #'
 Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
                     noise_model, length_win = 60, name_case = NULL, lmin = 0,
-                    save_res = NULL){
+                    save_result = NULL){
 
   date <- .data <- wts <- NULL
 
@@ -74,6 +76,25 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
       dplyr:: arrange(date) %>%
       dplyr:: slice_head(n = limit)
 
+
+    bef_n = nrow(before_data)
+    aft_n = nrow(after_data)
+
+    stopifnot("Series is too short" = isTRUE(bef_n > lmin))
+    stopifnot("Series is too short" = isTRUE(aft_n > lmin))
+
+    # set the same length for data before and after the break
+
+    n_all = ifelse(bef_n < aft_n, bef_n, aft_n)
+
+    before_data <- before_data %>%
+      dplyr:: arrange(date) %>%
+      dplyr:: slice_tail(n = n_all)
+
+    after_data <- after_data %>%
+      dplyr:: arrange(date) %>%
+      dplyr:: slice_head(n = n_all)
+
     Series_df <- rbind(before_data, after_data) %>%
       tidyr:: complete(date = seq(min(before_data$date),
                                   max(after_data$date), by = "day"))
@@ -83,9 +104,6 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
     Series_df <- Series_df %>%
       dplyr:: filter(date >= new_ends[1] & date <= new_ends[2])
   }
-
-  stopifnot("Series is too short" = isTRUE(nrow(before_data) > lmin))
-  stopifnot("Series is too short" = isTRUE(nrow(after_data) > lmin))
 
   df_XY = construct_XY_df(Series_df,
                           name_series = Name_series,
@@ -190,22 +208,13 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
                    t = (end_time - start_time),
                    df_XY = df_XY))
 
-  # if (!is.null(name_case)) {
-  #   save(Res_FGLS,
-  #        file = paste0("Res_FGLS_",
-  #                      name_case,
-  #                      Name_series,
-  #                      CP,
-  #                      ".RData"))
-  # }
-
   summary_tab <- as.data.frame(apply(fit.gls$t.table, 2, function(x) as.numeric(x)))
   rownames(summary_tab) <- rownames(fit.gls$t.table)
 
   Res <- list(Summary_tab = summary_tab,
-              Used_dates = Series_df$date)
+              Used_dates = Series_df$date[which(!is.na(Series_df[[Name_series]]))])
 
-  if(!is.null(save_res)){
+  if(!is.null(save_result)){
     saveRDS(Res,
          file = paste0("Test_CP_",
                        name_case,

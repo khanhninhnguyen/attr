@@ -10,7 +10,10 @@ Attribution_CP(
   nearby_cp,
   noise_model_fix = NULL,
   nearby_weight = NULL,
-  limit_2side = 100
+  name_main = NULL,
+  save_result = 0,
+  limit_2side = 100,
+  lmin = 0
 )
 }
 \arguments{
@@ -45,9 +48,17 @@ or 'White'}.}
 the weight assigned to a nearby station for aggregating predicted configurations.
 If NULL, equal weight is assigned to all stations.}
 
+\item{name_main}{a string specifying name of the main station (optional)}
+
+\item{save_result}{any values different to NULL specifying test results (summary
+table and date used for test) will be saved}
+
 \item{limit_2side}{an integer specifying the number of points in the segments
 before and after the change-point used for testing. If NULL (default), the segments
 before and after each tested change-point are defined by the nearest change-points.}
+
+\item{lmin}{an integer specifying minimum number of point in both sides for test.
+At default, lmin = 0.}
 }
 \value{
 A list with four components:

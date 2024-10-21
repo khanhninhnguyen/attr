@@ -12,7 +12,9 @@ Test_CP(
   tol = 0.01,
   noise_model,
   length_win = 60,
-  name_case = NULL
+  name_case = NULL,
+  lmin = 0,
+  save_result = NULL
 )
 }
 \arguments{
@@ -37,7 +39,11 @@ or 'White'}}
 
 \item{length_win}{an integer value specifying the length of the window used to compute the moving variance. Default is 60}
 
-\item{name_case}{the name of the file to save the detailed results. By default, the detailed results are not saved and default is NULL}
+\item{name_case}{character string indicating name of file in which test results are saved}
+
+\item{lmin}{an integer specifying minimum number of point in both side}
+
+\item{save_result}{the name of the file to save the detailed results. By default, the detailed results are not saved and default is NULL}
 }
 \value{
 A list of 2 elements:
