@@ -131,7 +131,7 @@ Attribution_CP <- function(dataset,
                            noise_model_fix = NULL,
                            nearby_weight = NULL,
                            name_main = NULL,
-                           save_result = 0,
+                           save_result = NULL,
                            limit_2side = 100,
                            lmin = 0){
   options(warn = 2)

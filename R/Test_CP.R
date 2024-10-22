@@ -95,6 +95,8 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
       dplyr:: arrange(date) %>%
       dplyr:: slice_head(n = n_all)
 
+    used_date = sort(c( before_data$date, after_data$date))
+
     Series_df <- rbind(before_data, after_data) %>%
       tidyr:: complete(date = seq(min(before_data$date),
                                   max(after_data$date), by = "day"))
@@ -211,8 +213,15 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
   summary_tab <- as.data.frame(apply(fit.gls$t.table, 2, function(x) as.numeric(x)))
   rownames(summary_tab) <- rownames(fit.gls$t.table)
 
+  if (is.null(limit)){
+    used_date =  Series_df$date[which(!is.na(Series_df[[Name_series]]))]
+  }
+
   Res <- list(Summary_tab = summary_tab,
-              Used_dates = Series_df$date[which(!is.na(Series_df[[Name_series]]))])
+              coef_arma = coef_arma,
+              mean_std = mean(std0, na.rm = TRUE),
+              sd_std = sd(std0, na.rm = TRUE),
+              Used_dates = used_date)
 
   if(!is.null(save_result)){
     saveRDS(Res,
