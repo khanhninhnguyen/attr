@@ -217,13 +217,14 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
     used_date =  Series_df$date[which(!is.na(Series_df[[Name_series]]))]
   }
 
-  Res <- list(Summary_tab = summary_tab,
-              coef_arma = coef_arma,
-              mean_std = mean(std0, na.rm = TRUE),
-              sd_std = sd(std0, na.rm = TRUE),
-              Used_dates = used_date)
 
   if(!is.null(save_result)){
+    Res <- list(Summary_tab = summary_tab,
+                coef_arma = coef_arma,
+                mean_std = mean(std0, na.rm = TRUE),
+                sd_std = sd(std0, na.rm = TRUE),
+                Used_dates = used_date)
+
     saveRDS(Res,
          file = paste0("Test_CP_",
                        name_case,
@@ -231,6 +232,9 @@ Test_CP <- function(Series_df, Name_series, CP, limit = NULL, tol = 0.01,
                        CP,
                        ".rds"))
   }
+
+  Res <- list(Summary_tab = summary_tab,
+              Used_dates = used_date)
 
   return(Res)
 
