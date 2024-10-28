@@ -257,7 +257,6 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
   main_model = transform_model(GE_mod$order)
   # for the other series
   all_5_model <- sapply(names(dataset), function(x){
-    print(x)
     List_joint = sort(c(main_cp, nearby_cp[[x]]))
     List_CP_six_series <- list(GGp = List_joint,
                                 GEp = List_joint,
@@ -266,7 +265,6 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
                                 GpE = List_joint
     )
     sapply(names_col[3:7], function(y){
-      print(y)
       all_mod = identify_model(Series_df = dataset[[x]],
                                Name_series = y,
                                List_CP = List_CP_six_series[[y]])
