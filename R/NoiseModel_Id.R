@@ -172,7 +172,7 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
 
   fit_arima <- function(signal.test, significant.level = 0.05){
 
-    date <- .data <- signal <- NULL
+    date <- .data
 
     pre_fit <- forecast::auto.arima( signal.test,
                                      d = 0,
@@ -218,8 +218,8 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
       if(sum(pq) != (p+q)){
         coeffient = rep(NA, 3)
         pq = c( p, 0, q)
-        fitARIMA = try(arima( signal, pq, method="ML"), TRUE)
-        coeffient[which(pq!= 0)] = fitARIMA$coef
+        fitARIMA = try(arima( signal.test, pq, method="ML"), TRUE)
+        coeffient[which(pq!= 0)] = fitARIMA$coef[!names(fitARIMA$coef) %in% "intercept"]
         sig_test <- lmtest::coeftest(fitARIMA)
         p_vals = sig_test[,4]
         p_vals =  p_vals[which(rownames(sig_test) %in% c("ar1", "ma1"))]
@@ -257,6 +257,7 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
   main_model = transform_model(GE_mod$order)
   # for the other series
   all_5_model <- sapply(names(dataset), function(x){
+    print(x)
     List_joint = sort(c(main_cp, nearby_cp[[x]]))
     List_CP_six_series <- list(GGp = List_joint,
                                 GEp = List_joint,
@@ -265,7 +266,8 @@ NoiseModel_Id <- function(dataset, main_cp, nearby_cp){
                                 GpE = List_joint
     )
     sapply(names_col[3:7], function(y){
-      all_mod = identify_model(dataset[[x]],
+      print(y)
+      all_mod = identify_model(Series_df = dataset[[x]],
                                Name_series = y,
                                List_CP = List_CP_six_series[[y]])
       transform_model(all_mod$order)
